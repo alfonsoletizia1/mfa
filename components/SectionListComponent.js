@@ -10,25 +10,34 @@ import {
 } from "react-native";
 
 const transformData = (team) => {
+  console.log("transform data ---> team --_>", team);
+  const portieri = team.filter((el) => el.R === "P");
+  var sumPortieri = 0;
+  portieri.forEach((element) => {
+    sumPortieri += element.value;
+  });
   return [
     {
       role: "Portieri",
-      data: team.P,
-      // total: team.getTotalValueForRole("P"),
+      data: portieri,
+      total: sumPortieri,
     },
     {
       role: "Difensori",
-      data: team.D,
+      data: team.filter((el) => el.R === "D"),
+
       // total: team.getTotalValueForRole("D"),
     },
     {
       role: "Centrocampisti",
-      data: team.C,
+      data: team.filter((el) => el.R === "C"),
+
       // total: team.getTotalValueForRole("C"),
     },
     {
       role: "Attaccanti",
-      data: team.A,
+      data: team.filter((el) => el.R === "A"),
+
       // total: team.getTotalValueForRole("A"),
     },
   ];
@@ -43,7 +52,7 @@ const SectionSeparator = ({ totalValue }) => (
 const data1 = {};
 const Item = ({ item }) => (
   <View style={styles.item}>
-    <Text style={styles.title}>{item.name}</Text>
+    <Text style={styles.title}>{item.Nome}</Text>
     <Text style={styles.title}>{item.value}</Text>
   </View>
 );
@@ -78,8 +87,8 @@ export default class SectionListComponent extends Component {
       <View style={styles.container}>
         <Text style={styles.teamName}>{teamName}</Text>
         <SectionList
-          sections={team}
-          key={id}
+          sections={transformData(team)}
+          keyExtractor={(item) => item.Id}
           renderItem={({ item }) => <Item item={item} />}
           renderSectionHeader={({ section: { role } }) => (
             <Text style={styles.header}>{role}</Text>

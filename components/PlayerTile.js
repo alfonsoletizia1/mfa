@@ -5,36 +5,23 @@ import { assignTeamPlayer } from "../store/taskAction";
 import { Button } from "react-native-paper";
 import { ASSIGN_TEAM_PLAYER } from "../store/stateSlicer";
 
-const handlePress = (item) => {};
-
 const PlayerTile = ({ item }) => {
   const dispatch = useDispatch();
   const handleAssign = (item) => {
     console.log("PRESSED");
     setdisableAssignButton(true);
-    // dispatch(ASSIGN_TEAM_PLAYER({ name: item.Nome, value: 10}, "0", item.R));
     dispatch(
       ASSIGN_TEAM_PLAYER({
-        name: item.Nome,
+        ...item,
         value: 10,
-        teamId: 0,
-        role: item.R,
-        id: item.Id,
+        teamId: "id",
       })
     );
-
     setdisableAssignButton(false);
   };
   const [expand, setExpand] = useState(false);
   const [disableAssignButton, setdisableAssignButton] = useState(false);
-  // "Partite Giocate": 3,
-  // "Gol fatti": 0,
-  // "Gs": 8,
-  // "Ass": 0,
-  // "Asf": 0,
-  // "Amm": 1,
-  // "Esp": 0,
-  // "Au": 0
+
   return (
     <View style={styles.externalContainer}>
       <View>
