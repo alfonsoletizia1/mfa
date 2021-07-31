@@ -23,24 +23,8 @@ const teamSlice = createSlice({
 
       state.teamStatus[action.payload.teamId].creditiDisponibili -=
         action.payload.value;
-      switch (action.payload.R) {
-        case "P":
-          state.teamStatus[action.payload.teamId].postiDisponibiliP -= 1;
-          break;
-        case "D":
-          state.teamStatus[action.payload.teamId].postiDisponibiliD -= 1;
-          break;
+      state.teamStatus[action.payload.teamId][action.payload.R] -= 1;
 
-        case "C":
-          state.teamStatus[action.payload.teamId].postiDisponibiliC -= 1;
-          break;
-
-        case "A":
-          state.teamStatus[action.payload.teamId].postiDisponibiliA -= 1;
-          break;
-        default:
-          break;
-      }
       state.teams.push(action.payload);
     },
   },
