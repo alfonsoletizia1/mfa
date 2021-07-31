@@ -60,10 +60,10 @@ export function getInitialTeamsStatus(ids, conf) {
   var initialStatus = {};
   var out = ids.forEach((el) => {
     initialStatus[el] = {
-      postiDisponibiliP: conf.numPortieri,
-      postiDisponibiliD: conf.numDifensori,
-      postiDisponibiliC: conf.numCentrocampisti,
-      postiDisponibiliA: conf.numAttaccanti,
+      P: conf.numPortieri,
+      D: conf.numDifensori,
+      C: conf.numCentrocampisti,
+      A: conf.numAttaccanti,
       creditiDisponibili: conf.creditiIniziali,
     };
   });
