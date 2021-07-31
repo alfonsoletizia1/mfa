@@ -1,29 +1,88 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Modal,
+  TextInput,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { assignTeamPlayer } from "../store/taskAction";
 import { Button } from "react-native-paper";
 import { ASSIGN_TEAM_PLAYER } from "../store/stateSlicer";
+import { Picker } from "@react-native-picker/picker";
 
 const PlayerTile = ({ item }) => {
   const dispatch = useDispatch();
   const handleAssign = (item) => {
     console.log("PRESSED");
-    setdisableAssignButton(true);
-    dispatch(
-      ASSIGN_TEAM_PLAYER({
-        ...item,
-        value: 10,
-        teamId: "id",
-      })
-    );
-    setdisableAssignButton(false);
+    setshowModal(true);
+    // setdisableAssignButton(true);
+    // dispatch(
+    //   ASSIGN_TEAM_PLAYER({
+    //     ...item,
+    //     value: 10,
+    //     teamId: "id",
+    //   })
+    // );
+    // setdisableAssignButton(false);
+  };
+  const handleChangeValue = (value) => {
+    setNumber(value);
   };
   const [expand, setExpand] = useState(false);
+  const [showModal, setshowModal] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState();
+  const [number, onChangeNumber] = useState(null);
+
   const [disableAssignButton, setdisableAssignButton] = useState(false);
 
   return (
     <View style={styles.externalContainer}>
+      <View style={styles.centeredView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showModal}
+          onRequestClose={() => {
+            setshowModal(false);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Picker
+                style={styles.picker}
+                itemStyle={styles.itemStyle}
+                mode={"dropdown"}
+                selectedValue={selectedTeam}
+                onValueChange={(itemValue, itemIndex) =>
+                  setSelectedTeam(itemValue)
+                }
+              >
+                <Picker.Item label="Java" value="java" />
+                <Picker.Item label="JavaScript" value="js" />
+              </Picker>
+              <TextInput
+                style={styles.input}
+                onChangeText={onChangeNumber}
+                value={number}
+                placeholder="useless placeholder"
+                keyboardType="numeric"
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Button mode={"outlined"}>{"Annulla"}</Button>
+                <Button mode={"outlined"}>{"OK"}</Button>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>
       <View>
         <TouchableOpacity
           style={styles.container}
@@ -63,14 +122,14 @@ const PlayerTile = ({ item }) => {
             </View>
           </View>
           <View>
-            <Button
+            <TouchableOpacity
               onPress={() => handleAssign(item)}
               disabled={disableAssignButton}
               // title={"Assegna"}
               style={styles.assignButton}
             >
               <Text style={{ color: "white" }}>{"Assegna"}</Text>
-            </Button>
+            </TouchableOpacity>
           </View>
         </View>
       ) : null}
@@ -81,6 +140,45 @@ const PlayerTile = ({ item }) => {
 export default PlayerTile;
 
 const styles = StyleSheet.create({
+  itemStyle: {
+    fontSize: 15,
+    height: 75,
+    color: "black",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  picker: {
+    width: 100,
+    borderColor: "black",
+    borderWidth: 1,
+  },
+  pickerContainer: {},
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
   assignButton: {
     alignItems: "center",
     backgroundColor: "red",

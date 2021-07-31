@@ -20,6 +20,27 @@ const teamSlice = createSlice({
   reducers: {
     ASSIGN_TEAM_PLAYER: (state, action) => {
       console.log("ACTION", action);
+
+      state.teamStatus[action.payload.teamId].creditiDisponibili -=
+        action.payload.value;
+      switch (action.payload.R) {
+        case "P":
+          state.teamStatus[action.payload.teamId].postiDisponibiliP -= 1;
+          break;
+        case "D":
+          state.teamStatus[action.payload.teamId].postiDisponibiliD -= 1;
+          break;
+
+        case "C":
+          state.teamStatus[action.payload.teamId].postiDisponibiliC -= 1;
+          break;
+
+        case "A":
+          state.teamStatus[action.payload.teamId].postiDisponibiliA -= 1;
+          break;
+        default:
+          break;
+      }
       state.teams.push(action.payload);
     },
   },

@@ -58,7 +58,7 @@ export class Teams {
 
 export function getInitialTeamsStatus(ids, conf) {
   var initialStatus = {};
-  ids.forEach((el) => {
+  var out = ids.forEach((el) => {
     initialStatus[el] = {
       postiDisponibiliP: conf.numPortieri,
       postiDisponibiliD: conf.numDifensori,
@@ -67,4 +67,6 @@ export function getInitialTeamsStatus(ids, conf) {
       creditiDisponibili: conf.creditiIniziali,
     };
   });
+  console.log("INITIAL STATUS ", initialStatus);
+  return initialStatus;
 }
