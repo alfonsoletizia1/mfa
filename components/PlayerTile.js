@@ -6,14 +6,24 @@ import {
   View,
   Modal,
   TextInput,
+  ToastAndroid,
+  Platform,
+  AlertIOS,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { assignTeamPlayer } from "../store/taskAction";
 import { Button } from "react-native-paper";
-import { ASSIGN_TEAM_PLAYER } from "../store/stateSlicer";
 import { Picker } from "@react-native-picker/picker";
+import { conf } from "../util/utilClasses";
+import { ASSIGN_TEAM_PLAYER } from "../store/stateSlicer";
 
 const PlayerTile = ({ item }) => {
+  function notifyMessage(msg) {
+    if (Platform.OS === "android") {
+      ToastAndroid.show(msg, ToastAndroid.SHORT);
+    } else {
+      AlertIOS.alert(msg);
+    }
+  }
   const dispatch = useDispatch();
   const handleAssign = (item) => {
     console.log("PRESSED");
@@ -28,12 +38,26 @@ const PlayerTile = ({ item }) => {
     // );
     // setdisableAssignButton(false);
   };
+  const handleAssignClick = (item, value, teamId) => {
+    // setdisableAssignButton(true);
+    //checkCanAssign
+    dispatch(
+      ASSIGN_TEAM_PLAYER({
+        ...item,
+        value: value,
+        teamId: teamId,
+      })
+    );
+    notifyMessage("Assegnato!");
+    setshowModal(false);
+    // setdisableAssignButton(false);
+  };
   const handleChangeValue = (value) => {
     setNumber(value);
   };
   const [expand, setExpand] = useState(false);
   const [showModal, setshowModal] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState();
+  const [selectedTeam, setSelectedTeam] = useState(conf.partecipants[0].id);
   const [number, onChangeNumber] = useState(null);
 
   const [disableAssignButton, setdisableAssignButton] = useState(false);
@@ -60,8 +84,11 @@ const PlayerTile = ({ item }) => {
                   setSelectedTeam(itemValue)
                 }
               >
-                <Picker.Item label="Java" value="java" />
-                <Picker.Item label="JavaScript" value="js" />
+                {conf.partecipants.map((el) => {
+                  return (
+                    <Picker.Item label={el.name} value={el.id} key={el.id} />
+                  );
+                })}
               </Picker>
               <TextInput
                 style={styles.input}
@@ -76,8 +103,15 @@ const PlayerTile = ({ item }) => {
                   justifyContent: "space-between",
                 }}
               >
-                <Button mode={"outlined"}>{"Annulla"}</Button>
-                <Button mode={"outlined"}>{"OK"}</Button>
+                <Button onPress={() => setshowModal(false)} mode={"outlined"}>
+                  {"Annulla"}{" "}
+                </Button>
+                <Button
+                  onPress={() => handleAssignClick(item, number, selectedTeam)}
+                  mode={"outlined"}
+                >
+                  {"OK"}
+                </Button>
               </View>
             </View>
           </View>
@@ -96,12 +130,13 @@ const PlayerTile = ({ item }) => {
             <Text style={styles.subTitle}>{item.Squadra}</Text>
           </View>
           <View style={styles.media}>
-            {/* <Text style={styles.title}>{"MV"}</Text> */}
             <Text style={styles.subTitle}>{item.Mv}</Text>
           </View>
           <View style={styles.fmedia}>
-            {/* <Text style={styles.title}>{"FM"}</Text> */}
             <Text style={styles.subTitle}>{item.Mf}</Text>
+          </View>
+          <View style={styles.pg}>
+            <Text style={styles.subTitle}>{item.Pg}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -140,6 +175,13 @@ const PlayerTile = ({ item }) => {
 export default PlayerTile;
 
 const styles = StyleSheet.create({
+  pg: {
+    borderLeftWidth: 1,
+    paddingLeft: 10,
+    marginLeft: 10,
+    minWidth: 50,
+    justifyContent: "center",
+  },
   itemStyle: {
     fontSize: 15,
     height: 75,

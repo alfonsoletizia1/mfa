@@ -56,10 +56,13 @@ export class Teams {
   }
 }
 
-export function getInitialTeamsStatus(ids, conf) {
+export function getInitialTeamsStatus(conf) {
+  console.log("conf", conf);
   var initialStatus = {};
-  var out = ids.forEach((el) => {
-    initialStatus[el] = {
+  conf.partecipants.forEach((el) => {
+    initialStatus[el.id] = {
+      name: el.name,
+      id: el.id,
       P: conf.numPortieri,
       D: conf.numDifensori,
       C: conf.numCentrocampisti,
@@ -70,3 +73,39 @@ export function getInitialTeamsStatus(ids, conf) {
   console.log("INITIAL STATUS ", initialStatus);
   return initialStatus;
 }
+export const statsFields = {
+  id: "Id",
+  role: "R",
+  name: "Nome",
+  team: "Squadra",
+  pg: "Pg",
+  mv: "Mv",
+  mf: "Mf",
+  gf: "Gf",
+  gs: "Gs",
+  assist: "Ass",
+  assistFermo: "Asf",
+  amm: "Amm",
+  esp: "Esp",
+  autogol: "Au",
+};
+export const conf = {
+  partecipanti: { ids: ["1"], nomi: ["Squadra 1"] },
+  partecipants: [
+    { id: "1", name: "Squadra 1" },
+    { id: "2", name: "Squadra 2" },
+    // { id: "3", name: "Squadra 3" },
+    // { id: "4", name: "Squadra 4" },
+    // { id: "5", name: "Squadra 5" },
+    // { id: "6", name: "Squadra 6" },
+    // { id: "7", name: "Squadra 7" },
+    // { id: "8", name: "Squadra 8" },
+  ],
+  num: { P: 3, D: 8, C: 8, A: 6 },
+  numeroDiPartecipanti: 6,
+  creditiIniziali: 500,
+  numPortieri: 3,
+  numDifensori: 8,
+  numCentrocampisti: 8,
+  numAttaccanti: 6,
+};

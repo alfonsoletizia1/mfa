@@ -3,13 +3,12 @@ import { Platform, StyleSheet, StatusBar } from "react-native";
 export default StyleSheet.create({
   container: {
     flexDirection: "column",
-
     // borderWidth: 3,
     // borderColor: "red",
   },
   lists: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    // flexDirection: "column",
+    // flexWrap: "wrap",
     // borderWidth: 3,
     // borderColor: "blue",
   },

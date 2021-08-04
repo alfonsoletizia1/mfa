@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import _ from "lodash";
 import {
   StyleSheet,
   Text,
@@ -19,114 +20,14 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { ListItem, Avatar, SearchBar } from "react-native-elements";
 import stats from "../assets/lista2019.json";
-import { List } from "react-native-paper";
 import filter from "lodash.filter";
-import style from "../style";
-import { Button } from "react-native-elements/dist/buttons/Button";
 import { Ionicons } from "@expo/vector-icons";
 import PlayerTile from "./PlayerTile";
 import FlatListHeader from "./FlatListHeader";
+import { statsFields } from "../util/utilClasses";
+import { CheckBox } from "react-native-elements";
 
-export class Player {
-  constructor() {
-    this.name = "";
-    this.value = 0;
-  }
-}
-export class Team {
-  constructor() {
-    this.role = ["P", "D", "C", "A", "All"];
-    this.P = [
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-    ];
-    this.D = [
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-    ];
-    this.C = [
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-    ];
-    this.A = [
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-      // { name: "Sirigu", value: 10 },
-    ];
-  }
-  getTotalValueForRole = (role) => {
-    var sum = 0;
-    var elements;
-    switch (role) {
-      case "P":
-        elements = this.P;
-        break;
-      case "D":
-        elements = this.D;
-        break;
-      case "C":
-        elements = this.C;
-        break;
-      case "A":
-        elements = this.A;
-        break;
-      default:
-        break;
-    }
-    elements.forEach((el) => {
-      sum += el.value;
-    });
-    return sum;
-  };
-  addP({ name, value }) {
-    if (this.P.length < 3) {
-      this.P.push({ name, value });
-      return true;
-    }
-    return false;
-  }
-  addD(dif) {
-    if (this.D.length < 8) {
-      this.D.push(dif);
-      return true;
-    }
-    return false;
-  }
-  addC(cen) {
-    if (this.C.length < 8) {
-      this.C.push(cen);
-      return true;
-    }
-    return false;
-  }
-  addA(att) {
-    if (this.A.length < 6) {
-      this.A.push(att);
-      return true;
-    }
-    return false;
-  }
-}
-
-const actualTeam = new Team();
 const DismissKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     {children}
@@ -138,9 +39,20 @@ const ListTileTest = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [query, setQuery] = useState("");
-  const [fullData, setFullData] = useState([]);
+  const [order, setOrder] = useState(false);
+  //CHECKBOXES
+  const [checkP, setCheckP] = useState(true);
+  const [checkD, setCheckD] = useState(true);
+  const [checkC, setCheckC] = useState(true);
+  const [checkA, setCheckA] = useState(true);
+  //Data Order
+  const [field, setField] = useState(null);
+  const [orderType, setOrderType] = useState(null);
+
+  // const [fullData, setFullData] = useState([]);
   const [showFlatList, setShowFlatList] = useState(true);
-  const [team, setTeam] = useState(actualTeam);
+  const [roles, setRoles] = useState(["P", "D", "C", "A"]);
+  // const [team, setTeam] = useState(actualTeam);
   const typingTimer = useRef(null);
   const options = {
     // isCaseSensitive: false,
@@ -181,7 +93,7 @@ const ListTileTest = () => {
         setShowFlatList(true);
       }
       var res = fuse.search(text);
-      console.log("res ", res);
+      // console.log("res ", res);
       setData(
         res.map((el) => {
           return el.item;
@@ -190,46 +102,94 @@ const ListTileTest = () => {
     }
   };
 
-  const filterData = (text) => {
-    setData(
-      filter(fullData, (user) => {
-        return contains(user, text);
-      })
-    );
-  };
-  const contains = ({ Nome, Squadra }, query) => {
-    if (Nome.toLowerCase().includes(query)) {
-      return true;
+  // const filterData = (text) => {
+  //   setData(
+  //     filter(fullData, (user) => {
+  //       return contains(user, text);
+  //     })
+  //   );
+  // };
+  // const contains = ({ Nome, Squadra }, query) => {
+  //   if (Nome.toLowerCase().includes(query)) {
+  //     return true;
+  //   }
+
+  //   return false;
+  // };
+
+  /**
+   *
+   */
+  const filterByRole = (role, check) => {
+    // setData(data.filter((el) => el[statsFields.role] === role));
+    if (check) {
+      roles.push(role);
+      setRoles(roles);
+    } else {
+      var index = roles.indexOf(role);
+      if (index > -1) {
+        roles.splice(index, 1);
+        setRoles(roles);
+      }
     }
-
-    return false;
   };
-
+  function getSortOrder(prop, orderType) {
+    return function (a, b) {
+      let out = 0;
+      if (a[prop] > b[prop]) {
+        out = 1;
+      } else if (a[prop] < b[prop]) {
+        out = -1;
+      }
+      if (orderType === "DESC") {
+        out *= -1;
+      }
+      return out;
+    };
+  }
+  const sortData = (field, orderType = "desc") => {
+    console.log("SORT.... the field", field);
+    // setOrder(!order);
+    setField(field);
+    setOrderType(orderType);
+    // setData(data.sort(getSortOrder(field, orderType)));
+    // var newData = _.orderBy(data, field, orderType);
+    // setData(newData);
+    console.log("SORTED");
+  };
   const handleCloseButton = () => {
     setQuery("");
     setData(stats);
     Keyboard.dismiss();
-    setShowFlatList(false);
+    // setShowFlatList(false);
   };
 
-  const renderItem = ({ item }) => {
-    return (
-      <TouchableOpacity>
-        <View style={styles.listItem}>
-          <View style={styles.metaInfo}>
-            <Text style={styles.title}>{item.Nome}</Text>
-            <Text style={styles.subTitle}>{item.Squadra}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  // const renderItem = ({ item }) => {
+  //   return (
+  //     <TouchableOpacity>
+  //       <View style={styles.listItem}>
+  //         <View style={styles.metaInfo}>
+  //           <Text style={styles.title}>{item.Nome}</Text>
+  //           <Text style={styles.subTitle}>{item.Squadra}</Text>
+  //         </View>
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
   useEffect(() => {
+    // console.log("TYPE OF MV", typeof stats[0].Mf);
+    var newStats = Object.assign([], stats);
+    console.log(parseFloat(typeof newStats[0].Mf));
+    // newStats.map((el) => {
+    //   console.log("el", el);
+    //   // el.Mf = parseFloat(el.Mf.replace(",", "."));
+    //   // el.Mv = parseFloat(el.Mf.replace(",", "."));
+    // });
     setIsLoading(true);
     setData(stats);
-    setFullData(stats);
+    // setFullData(stats);
     setIsLoading(false);
-    console.log(team);
+    // console.log(team);
   }, []);
   if (isLoading) {
     return (
@@ -242,34 +202,79 @@ const ListTileTest = () => {
   return (
     // <DismissKeyboard>
     <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          // outlineColor="transparent"
-          style={styles.input}
-          autoCapitalize="none"
-          autoCorrect={false}
-          value={query}
-          onChangeText={(queryText) => handleSearch(queryText)}
-          placeholder="Search"
-          onFocus={() => setShowFlatList(true)}
-          onSubmitEditing={Keyboard.dismiss}
-        />
-
-        <View>
-          <Ionicons
-            name="close-circle-outline"
-            size={35}
-            onPress={() => handleCloseButton()}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "center",
+        }}
+      >
+        <View style={styles.inputContainer}>
+          <TextInput
+            underlineColor="transparent"
+            underlineColorAndroid="transparent"
+            // outlineColor="transparent"
+            style={styles.input}
+            autoCapitalize="none"
+            autoCorrect={false}
+            value={query}
+            onChangeText={(queryText) => handleSearch(queryText)}
+            placeholder="Search"
+            onFocus={() => setShowFlatList(true)}
+            onSubmitEditing={Keyboard.dismiss}
           />
+
+          <View>
+            <Ionicons
+              name="close-circle-outline"
+              size={35}
+              onPress={() => handleCloseButton()}
+            />
+          </View>
         </View>
+        <View></View>
+        <CheckBox
+          title="P"
+          checked={checkP}
+          onPress={() => {
+            filterByRole("P", !checkP);
+            setCheckP(!checkP);
+          }}
+        />
+        <CheckBox
+          title="D"
+          checked={checkD}
+          onPress={() => {
+            filterByRole("D", !checkD);
+            setCheckD(!checkD);
+          }}
+        />
+        <CheckBox
+          title="C"
+          checked={checkC}
+          onPress={() => {
+            filterByRole("C", !checkC);
+            setCheckC(!checkC);
+          }}
+        />
+        <CheckBox
+          title="A"
+          checked={checkA}
+          onPress={() => {
+            filterByRole("A", !checkA);
+            setCheckA(!checkA);
+          }}
+        />
       </View>
       {showFlatList ? (
         <KeyboardAvoidingView style={styles.flatlist}>
           <FlatList
-            ListHeaderComponent={<FlatListHeader />}
-            data={data}
+            ListHeaderComponent={<FlatListHeader onPressField={sortData} />}
+            stickyHeaderIndices={[0]}
+            // data={data}
+            data={_.filter(_.orderBy(data, field, orderType), (el) =>
+              roles.includes(el.R)
+            )}
             keyExtractor={(item) => String(item.Id)}
             renderItem={({ item }) => <PlayerTile item={item} />}
           />

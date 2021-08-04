@@ -9,7 +9,7 @@ import {
   StatusBar,
 } from "react-native";
 import { useSelector } from "react-redux";
-
+import { conf } from "../util/utilClasses";
 const transformData = (team) => {
   console.log("transform data ---> team --_>", team);
   const portieri = team.filter((el) => el.R === "P");
@@ -19,83 +19,94 @@ const transformData = (team) => {
   });
   return [
     {
-      role: "Portieri: ",
-      data: portieri,
-      total: sumPortieri,
+      role: "Portieri",
+      roleCode: "P",
+      data: team.filter((el) => el.R === "P"),
+      total: team
+        .filter((el) => el.R === "P")
+        .reduce((sum, val) => sum + Number(val.value), 0),
     },
     {
       role: "Difensori",
-      data: team.filter((el) => el.R === "D"),
+      roleCode: "D",
 
-      // total: team.getTotalValueForRole("D"),
+      data: team.filter((el) => el.R === "D"),
+      total: team
+        .filter((el) => el.R === "D")
+        .reduce((sum, val) => sum + Number(val.value), 0),
     },
     {
+      roleCode: "C",
       role: "Centrocampisti",
       data: team.filter((el) => el.R === "C"),
-
-      // total: team.getTotalValueForRole("C"),
+      total: team
+        .filter((el) => el.R === "C")
+        .reduce((sum, val) => sum + Number(val.value), 0),
     },
     {
+      roleCode: "A",
       role: "Attaccanti",
       data: team.filter((el) => el.R === "A"),
-
-      // total: team.getTotalValueForRole("A"),
+      total: team
+        .filter((el) => el.R === "A")
+        .reduce((sum, val) => sum + Number(val.value), 0),
     },
   ];
 };
 
-const SectionSeparator = ({ totalValue }) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{"Totale:"}</Text>
-    <Text style={styles.title}>{totalValue}</Text>
-  </View>
-);
-const data1 = {};
+// const SectionSeparator = ({ totalValue }) => (
+//   <View style={styles.item}>
+//     <Text style={styles.title}>{"Totale:"}</Text>
+//     <Text style={styles.title}>{totalValue}</Text>
+//   </View>
+// );
 const Item = ({ item }) => (
   <View style={styles.item}>
     <Text style={styles.title}>{item.Nome}</Text>
     <Text style={styles.title}>{item.value}</Text>
   </View>
 );
-const Header = ({ leftTitle, rightTitle }) => (
+const Header = ({ leftTitle, rightTitle, centerTitle }) => (
   <View style={styles.headerContainer}>
     <Text style={styles.header}>{leftTitle}</Text>
+    <Text style={styles.header}>{centerTitle}</Text>
     <Text style={styles.header}>{rightTitle}</Text>
   </View>
 );
-export default class SectionListComponent extends Component {
-  constructor(props) {
-    super(props);
-    const { team } = this.props;
-    const DATA = transformData(team);
-    this.state = {
-      data: DATA,
-    };
-  }
-  render() {
-    const { data } = this.state;
-    const { teamName, team } = this.props;
-    return (
-      <View style={styles.container}>
-        <View style={styles.teamNameContainer}>
-          <Text style={styles.teamName}>{teamName}</Text>
-        </View>
-        <SectionList
-          sections={transformData(team)}
-          keyExtractor={(item) => item.Id}
-          renderItem={({ item }) => <Item item={item} />}
-          renderSectionHeader={({ section: { role, total } }) => (
-            // <Text style={styles.header}>{role}</Text>
-            <Header rightTitle={total} leftTitle={role} />
-          )}
-          // renderSectionFooter={({ section: { total } }) => (
-          //   <SectionSeparator totalValue={total} />
-          // )}
-        />
+export default function SectionListComponent(props) {
+  const { teamName, team, teamId, teamState } = props;
+  console.log("SECTION TEAM STATE", teamState);
+  const state = useSelector((state) => state.teamStatus);
+  return (
+    <View style={styles.container}>
+      <View style={styles.teamNameContainer}>
+        <Text style={styles.teamName}>{teamName}</Text>
       </View>
-    );
-  }
+      <SectionList
+        sections={transformData(team)}
+        keyExtractor={(item) => item.Id}
+        renderItem={({ item }) => <Item item={item} />}
+        renderSectionHeader={({ section: { role, total, roleCode } }) => (
+          // <Text style={styles.header}>{role}</Text>
+          <Header
+            leftTitle={
+              conf.num[roleCode] -
+              teamState[roleCode] +
+              "/" +
+              conf.num[roleCode]
+            }
+            rightTitle={total}
+            centerTitle={role}
+          />
+        )}
+        // renderSectionFooter={({ section: { total } }) => (
+        //   <SectionSeparator totalValue={total} />
+        // )}
+      />
+    </View>
+  );
 }
+// }
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
