@@ -13,10 +13,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
-import { conf } from "../util/utilClasses";
+import { conf, iconsConf } from "../util/utilClasses";
 import { ASSIGN_TEAM_PLAYER } from "../store/stateSlicer";
-
-const PlayerTile = ({ item }) => {
+import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+const PlayerTile = ({ item, onAssign, index }) => {
   function notifyMessage(msg) {
     if (Platform.OS === "android") {
       ToastAndroid.show(msg, ToastAndroid.SHORT);
@@ -26,7 +27,6 @@ const PlayerTile = ({ item }) => {
   }
   const dispatch = useDispatch();
   const handleAssign = (item) => {
-    console.log("PRESSED");
     setshowModal(true);
     // setdisableAssignButton(true);
     // dispatch(
@@ -48,6 +48,7 @@ const PlayerTile = ({ item }) => {
         teamId: teamId,
       })
     );
+    onAssign(item.Id);
     notifyMessage("Assegnato!");
     setshowModal(false);
     // setdisableAssignButton(false);
@@ -58,7 +59,7 @@ const PlayerTile = ({ item }) => {
   const [expand, setExpand] = useState(false);
   const [showModal, setshowModal] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState(conf.partecipants[0].id);
-  const [number, onChangeNumber] = useState(null);
+  const [number, onChangeNumber] = useState("1");
 
   const [disableAssignButton, setdisableAssignButton] = useState(false);
 
@@ -90,13 +91,18 @@ const PlayerTile = ({ item }) => {
                   );
                 })}
               </Picker>
-              <TextInput
-                style={styles.input}
-                onChangeText={onChangeNumber}
-                value={number}
-                placeholder="useless placeholder"
-                keyboardType="numeric"
-              />
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={{ fontSize: 16 }}>{"Valore: "}</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeNumber}
+                  value={number}
+                  placeholder="1"
+                  keyboardType="numeric"
+                  required={true}
+                />
+              </View>
+
               <View
                 style={{
                   flexDirection: "row",
@@ -123,7 +129,12 @@ const PlayerTile = ({ item }) => {
           onPress={() => setExpand(!expand)}
         >
           <View style={styles.role}>
-            <Text>{item.R}</Text>
+            {/* <Text>{item.R}</Text> */}
+            <MaterialCommunityIcons
+              name={iconsConf[item.R].name}
+              size={24}
+              color={iconsConf[item.R].color}
+            />
           </View>
           <View style={styles.name}>
             <Text style={styles.title}>{item.Nome}</Text>
@@ -137,6 +148,11 @@ const PlayerTile = ({ item }) => {
           </View>
           <View style={styles.pg}>
             <Text style={styles.subTitle}>{item.Pg}</Text>
+          </View>
+          <View style={styles.pg}>
+            <TouchableOpacity onPress={() => handleAssign(item)}>
+              <Ionicons name="add-circle-outline" size={24} color="blue" />
+            </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </View>
@@ -156,16 +172,16 @@ const PlayerTile = ({ item }) => {
               <Text>{"Au: " + item.Au}</Text>
             </View>
           </View>
-          <View>
+          {/* <View>
             <TouchableOpacity
               onPress={() => handleAssign(item)}
               disabled={disableAssignButton}
               // title={"Assegna"}
-              style={styles.assignButton}
+              style={styles.addButton}
             >
               <Text style={{ color: "white" }}>{"Assegna"}</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       ) : null}
     </View>
@@ -175,10 +191,17 @@ const PlayerTile = ({ item }) => {
 export default PlayerTile;
 
 const styles = StyleSheet.create({
-  pg: {
+  addButton: {
     borderLeftWidth: 1,
-    paddingLeft: 10,
-    marginLeft: 10,
+    // paddingLeft: 10,
+    // marginLeft: 10,
+    minWidth: 50,
+    justifyContent: "center",
+  },
+  pg: {
+    // borderLeftWidth: 1,
+    // paddingLeft: 10,
+    // marginLeft: 10,
     minWidth: 50,
     justifyContent: "center",
   },
@@ -190,9 +213,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   picker: {
-    width: 100,
-    borderColor: "black",
-    borderWidth: 1,
+    minWidth: 200,
+    resizeMode: "stretch",
   },
   pickerContainer: {},
   centeredView: {
@@ -216,6 +238,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   input: {
+    borderRadius: 10,
     height: 40,
     margin: 12,
     borderWidth: 1,
@@ -246,6 +269,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   externalContainer: {
+    flex: 1,
     marginTop: 10,
     paddingVertical: 10,
     paddingHorizontal: 10,
@@ -257,7 +281,7 @@ const styles = StyleSheet.create({
     minWidth: 200,
   },
   container: {
-    flex: 1,
+    // flex: 1,
     flexDirection: "row",
     // marginTop: 10,
     // paddingVertical: 10,
@@ -271,7 +295,7 @@ const styles = StyleSheet.create({
   },
   media: {
     flex: 1,
-    borderRightWidth: 1,
+    // borderRightWidth: 1,
     paddingRight: 5,
     marginRight: 10,
     minWidth: 50,
@@ -286,15 +310,15 @@ const styles = StyleSheet.create({
   },
 
   role: {
-    flex: 1,
+    // flex: 1,
     justifyContent: "center",
-    borderRightWidth: 1,
+    // borderRightWidth: 1,
     paddingRight: 5,
     marginRight: 10,
   },
   name: {
     flex: 4,
-    borderRightWidth: 1,
+    // borderRightWidth: 1,
     paddingRight: 5,
     marginRight: 10,
     minWidth: 130,
@@ -311,5 +335,9 @@ const styles = StyleSheet.create({
   },
   metaInfo: {
     marginLeft: 10,
+  },
+  title: {
+    fontWeight: "bold",
+    // fontFamily:
   },
 });
