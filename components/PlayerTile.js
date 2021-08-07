@@ -66,62 +66,66 @@ const PlayerTile = ({ item, onAssign, index }) => {
   return (
     <View style={styles.externalContainer}>
       <View style={styles.centeredView}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={showModal}
-          onRequestClose={() => {
-            setshowModal(false);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Picker
-                style={styles.picker}
-                itemStyle={styles.itemStyle}
-                mode={"dropdown"}
-                selectedValue={selectedTeam}
-                onValueChange={(itemValue, itemIndex) =>
-                  setSelectedTeam(itemValue)
-                }
-              >
-                {conf.partecipants.map((el) => {
-                  return (
-                    <Picker.Item label={el.name} value={el.id} key={el.id} />
-                  );
-                })}
-              </Picker>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ fontSize: 16 }}>{"Valore: "}</Text>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChangeNumber}
-                  value={number}
-                  placeholder="1"
-                  keyboardType="numeric"
-                  required={true}
-                />
-              </View>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Button onPress={() => setshowModal(false)} mode={"outlined"}>
-                  {"Annulla"}{" "}
-                </Button>
-                <Button
-                  onPress={() => handleAssignClick(item, number, selectedTeam)}
-                  mode={"outlined"}
+        {showModal ? (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={showModal}
+            onRequestClose={() => {
+              setshowModal(false);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Picker
+                  style={styles.picker}
+                  itemStyle={styles.itemStyle}
+                  mode={"dropdown"}
+                  selectedValue={selectedTeam}
+                  onValueChange={(itemValue, itemIndex) =>
+                    setSelectedTeam(itemValue)
+                  }
                 >
-                  {"OK"}
-                </Button>
+                  {conf.partecipants.map((el) => {
+                    return (
+                      <Picker.Item label={el.name} value={el.id} key={el.id} />
+                    );
+                  })}
+                </Picker>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ fontSize: 16 }}>{"Valore: "}</Text>
+                  <TextInput
+                    style={styles.input}
+                    onChangeText={onChangeNumber}
+                    value={number}
+                    placeholder="1"
+                    keyboardType="numeric"
+                    required={true}
+                  />
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Button onPress={() => setshowModal(false)} mode={"outlined"}>
+                    {"Annulla"}{" "}
+                  </Button>
+                  <Button
+                    onPress={() =>
+                      handleAssignClick(item, number, selectedTeam)
+                    }
+                    mode={"outlined"}
+                  >
+                    {"OK"}
+                  </Button>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
+        ) : null}
       </View>
       <View>
         <TouchableOpacity
@@ -190,7 +194,7 @@ const PlayerTile = ({ item, onAssign, index }) => {
 
 export default PlayerTile;
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   addButton: {
     borderLeftWidth: 1,
     // paddingLeft: 10,
