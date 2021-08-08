@@ -94,12 +94,12 @@ export const conf = {
   partecipants: [
     { id: "1", name: "Squadra 1" },
     { id: "2", name: "Squadra 2" },
-    // { id: "3", name: "Squadra 3" },
-    // { id: "4", name: "Squadra 4" },
-    // { id: "5", name: "Squadra 5" },
-    // { id: "6", name: "Squadra 6" },
-    // { id: "7", name: "Squadra 7" },
-    // { id: "8", name: "Squadra 8" },
+    { id: "3", name: "Squadra 3" },
+    { id: "4", name: "Squadra 4" },
+    { id: "5", name: "Squadra 5" },
+    { id: "6", name: "Squadra 6" },
+    { id: "7", name: "Squadra 7" },
+    { id: "8", name: "Squadra 8" },
   ],
   num: { P: 3, D: 8, C: 8, A: 6 },
   numeroDiPartecipanti: 6,
@@ -109,3 +109,29 @@ export const conf = {
   numCentrocampisti: 8,
   numAttaccanti: 6,
 };
+export const iconsConf = {
+  P: {
+    name: "alpha-p-circle-outline",
+    color: "orange",
+  },
+  D: {
+    name: "alpha-d-circle-outline",
+    color: "green",
+  },
+  C: {
+    name: "alpha-c-circle-outline",
+    color: "blue",
+  },
+  A: {
+    name: "alpha-a-circle-outline",
+    color: "red",
+  },
+};
+
+export function switchOrderType(actualOrder) {
+  if (actualOrder === "asc") {
+    return "desc";
+  } else {
+    return "asc";
+  }
+}

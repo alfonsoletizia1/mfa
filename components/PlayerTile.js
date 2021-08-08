@@ -17,12 +17,14 @@ import { conf, iconsConf } from "../util/utilClasses";
 import { ASSIGN_TEAM_PLAYER } from "../store/stateSlicer";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-const PlayerTile = ({ item, onAssign, index }) => {
+const PlayerTile = ({ item, onAssign, index, disableAssign }) => {
   function notifyMessage(msg) {
     if (Platform.OS === "android") {
       ToastAndroid.show(msg, ToastAndroid.SHORT);
-    } else {
+    } else if (Platform.OS === "ios") {
       AlertIOS.alert(msg);
+    } else {
+      alert(msg);
     }
   }
   const dispatch = useDispatch();
@@ -77,6 +79,7 @@ const PlayerTile = ({ item, onAssign, index }) => {
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
+                <Text> {"Seleziona la squadra: "} </Text>
                 <Picker
                   style={styles.picker}
                   itemStyle={styles.itemStyle}
@@ -147,14 +150,17 @@ const PlayerTile = ({ item, onAssign, index }) => {
           <View style={styles.media}>
             <Text style={styles.subTitle}>{item.Mv}</Text>
           </View>
-          <View style={styles.fmedia}>
+          <View style={styles.media}>
             <Text style={styles.subTitle}>{item.Mf}</Text>
           </View>
-          <View style={styles.pg}>
+          <View style={styles.media}>
             <Text style={styles.subTitle}>{item.Pg}</Text>
           </View>
           <View style={styles.pg}>
-            <TouchableOpacity onPress={() => handleAssign(item)}>
+            <TouchableOpacity
+              disabled={disableAssign}
+              onPress={() => handleAssign(item)}
+            >
               <Ionicons name="add-circle-outline" size={24} color="blue" />
             </TouchableOpacity>
           </View>
@@ -162,7 +168,7 @@ const PlayerTile = ({ item, onAssign, index }) => {
       </View>
       {expand ? (
         <View>
-          <View style={styles.details}>
+          {/* <View style={styles.details}>
             <View>
               <Text>{"PG: " + item.Pg}</Text>
               <Text>{"GF: " + item.Gf}</Text>
@@ -175,16 +181,6 @@ const PlayerTile = ({ item, onAssign, index }) => {
               <Text>{"Esp: " + item.Esp}</Text>
               <Text>{"Au: " + item.Au}</Text>
             </View>
-          </View>
-          {/* <View>
-            <TouchableOpacity
-              onPress={() => handleAssign(item)}
-              disabled={disableAssignButton}
-              // title={"Assegna"}
-              style={styles.addButton}
-            >
-              <Text style={{ color: "white" }}>{"Assegna"}</Text>
-            </TouchableOpacity>
           </View> */}
         </View>
       ) : null}
@@ -204,10 +200,11 @@ export const styles = StyleSheet.create({
   },
   pg: {
     // borderLeftWidth: 1,
-    // paddingLeft: 10,
-    // marginLeft: 10,
-    minWidth: 50,
+    paddingRight: 5,
+    marginRight: 5,
+    // minWidth: 50,
     justifyContent: "center",
+    alignItems: "flex-end",
   },
   itemStyle: {
     fontSize: 15,
@@ -250,7 +247,7 @@ export const styles = StyleSheet.create({
   },
   assignButton: {
     alignItems: "center",
-    backgroundColor: "red",
+    //backgroundColor: "red",
     borderWidth: 1,
     borderRadius: 10,
     padding: 5,
@@ -273,7 +270,7 @@ export const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   externalContainer: {
-    flex: 1,
+    // flex: 1,
     marginTop: 10,
     paddingVertical: 10,
     paddingHorizontal: 10,
@@ -282,9 +279,10 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "black",
-    minWidth: 200,
+    // minWidth: 200,
   },
   container: {
+    flexWrap: "wrap",
     // flex: 1,
     flexDirection: "row",
     // marginTop: 10,
@@ -300,15 +298,18 @@ export const styles = StyleSheet.create({
   media: {
     flex: 1,
     // borderRightWidth: 1,
-    paddingRight: 5,
-    marginRight: 10,
-    minWidth: 50,
+    // paddingRight: 5,
+    // marginRight: 10,
+    justifyContent: "center",
+    minWidth: 35,
     justifyContent: "center",
   },
 
   fmedia: {
     flex: 1,
-    marginRight: 0,
+    paddingRight: 5,
+
+    marginRight: 10,
     minWidth: 50,
     justifyContent: "center",
   },
@@ -321,11 +322,11 @@ export const styles = StyleSheet.create({
     marginRight: 10,
   },
   name: {
-    flex: 4,
+    flex: 3,
     // borderRightWidth: 1,
     paddingRight: 5,
     marginRight: 10,
-    minWidth: 130,
+    minWidth: 100,
   },
 
   listItem: {

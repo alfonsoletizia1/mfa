@@ -2,7 +2,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 
 const Tab = createMaterialTopTabNavigator();
 import React from "react";
-import { View, KeyboardAvoidingView } from "react-native";
+import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 
 import styles from "../styles";
 import SectionListComponent from "./SectionListComponent";
@@ -11,9 +11,9 @@ import { useSelector } from "react-redux";
 import _ from "lodash";
 ///DATI FITTIZI DA OTTENERE
 export default function Home() {
-  const state = useSelector((state) => state.teams);
+  const { teams, teamStatus } = useSelector((state) => state.teams);
 
-  console.log("teams", state.teams);
+  console.log("teamStatus", teamStatus);
 
   // var team = teams.filter((el) => el);
   return (
@@ -40,7 +40,7 @@ export default function Home() {
         teamName={conf.partecipants[0].name}
         teamId={conf.partecipants[0].id}
       /> */}
-      {Object.keys(state.teamStatus).map((id) => {
+      {/* {Object.keys(state.teamStatus).map((id) => {
         return (
           <View key={id}>
             <SectionListComponent
@@ -52,22 +52,25 @@ export default function Home() {
             />
           </View>
         );
-      })}
-      {Object.values(state.teamStatus)
-        .sort((a, b) => -a.creditiDisponibili + b.creditiDisponibili)
-        .map((p) => {
-          return (
-            <View key={p.id}>
-              <SectionListComponent
-                team={state.teams.filter((el) => el.teamId === p.id)}
-                teamName={p.name}
-                teamId={p.id}
-                teamState={p}
-                creditiDisponibili={p.creditiDisponibili}
-              />
-            </View>
-          );
-        })}
+      })} */}
+      <ScrollView>
+        {Object.values(teamStatus)
+          .sort((a, b) => -a.creditiDisponibili + b.creditiDisponibili)
+          .map((p) => {
+            return (
+              <View key={p.id}>
+                <SectionListComponent
+                  team={teams.filter((el) => el.teamId === p.id)}
+                  teamName={p.name}
+                  teamId={p.id}
+                  teamState={p}
+                  creditiDisponibili={p.creditiDisponibili}
+                />
+              </View>
+            );
+          })}
+      </ScrollView>
+
       {/* {conf.partecipants.map((p) => {
         return (
           <View key={p.id}>

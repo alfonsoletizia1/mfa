@@ -7,11 +7,15 @@ import {
   SafeAreaView,
   SectionList,
   StatusBar,
+  TouchableOpacity,
+  TextInput,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { conf } from "../util/utilClasses";
+import SectionListItem from "./SectionListItem";
+
 const transformData = (team) => {
-  console.log("transform data ---> team --_>", team);
+  // console.log("transform data ---> team -->", team);
   const portieri = team.filter((el) => el.R === "P");
   var sumPortieri = 0;
   portieri.forEach((element) => {
@@ -60,6 +64,7 @@ const transformData = (team) => {
 //     <Text style={styles.title}>{totalValue}</Text>
 //   </View>
 // );
+
 const Item = ({ item }) => (
   <View style={styles.item}>
     <Text style={styles.title}>{item.Nome}</Text>
@@ -67,38 +72,50 @@ const Item = ({ item }) => (
   </View>
 );
 const Header = ({ leftTitle, rightTitle, centerTitle }) => (
-  <View style={styles.headerContainer}>
+  <TouchableOpacity style={styles.headerContainer}>
     <Text style={styles.header}>{leftTitle}</Text>
     <Text style={styles.header}>{centerTitle}</Text>
     <Text style={styles.header}>{rightTitle}</Text>
-  </View>
+  </TouchableOpacity>
 );
 export default function SectionListComponent(props) {
-  const { teamName, team, teamId, teamState } = props;
-  console.log("SECTION TEAM STATE", teamState);
-  const state = useSelector((state) => state.teamStatus);
+  const [showItems, setShowItems] = useState(true);
+  const { teamName, team, teamId, teamState, creditiDisponibili } = props;
+  // console.log("SECTION TEAM STATE", teamState);
+  const teamStatus = useSelector((state) => state.teams.teamStatus);
+
   return (
     <View style={styles.container}>
-      <View style={styles.teamNameContainer}>
+      <TouchableOpacity
+        style={styles.teamNameContainer}
+        onPress={() => {
+          console.log(showItems);
+          setShowItems(!showItems);
+        }}
+      >
         <Text style={styles.teamName}>{teamName}</Text>
-      </View>
+        <Text style={styles.teamName}>{creditiDisponibili}</Text>
+      </TouchableOpacity>
       <SectionList
         sections={transformData(team)}
         keyExtractor={(item) => item.Id}
-        renderItem={({ item }) => <Item item={item} />}
-        renderSectionHeader={({ section: { role, total, roleCode } }) => (
-          // <Text style={styles.header}>{role}</Text>
-          <Header
-            leftTitle={
-              conf.num[roleCode] -
-              teamState[roleCode] +
-              "/" +
-              conf.num[roleCode]
-            }
-            rightTitle={total}
-            centerTitle={role}
-          />
-        )}
+        renderItem={({ item }) => {
+          return <SectionListItem showItems={showItems} item={item} />;
+        }}
+        renderSectionHeader={({ section: { role, total, roleCode } }) =>
+          showItems ? (
+            <Header
+              leftTitle={
+                conf.num[roleCode] -
+                teamStatus[teamId][roleCode] +
+                "/" +
+                conf.num[roleCode]
+              }
+              rightTitle={total}
+              centerTitle={role}
+            />
+          ) : null
+        }
         // renderSectionFooter={({ section: { total } }) => (
         //   <SectionSeparator totalValue={total} />
         // )}
@@ -108,6 +125,12 @@ export default function SectionListComponent(props) {
 }
 // }
 const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
   container: {
     // flex: 1,
     padding: 10,
@@ -144,6 +167,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   teamNameContainer: {
+    justifyContent: "space-around",
+    flexDirection: "row",
     padding: 5,
     margin: 5,
     backgroundColor: "#1be0da",

@@ -16,11 +16,16 @@ import {
   TextInput,
 } from "react-native";
 import Fuse from "fuse.js";
-import stats from "../assets/lista2019.json";
+import stats from "../assets/lista2019 copy.json";
 import { Ionicons } from "@expo/vector-icons";
 import PlayerTile from "./PlayerTile";
 import FlatListHeader from "./FlatListHeader";
+
 import { CheckBox } from "react-native-elements";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { iconsConf } from "../util/utilClasses";
+import { useSelector } from "react-redux";
+import HeaderList from "./HeaderList";
 
 // const DismissKeyboard = ({ children }) => (
 //   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -41,6 +46,7 @@ const ListTileTest = () => {
   const [orderType, setOrderType] = useState(null);
   const [showFlatList, setShowFlatList] = useState(true);
   const [roles, setRoles] = useState(["P", "D", "C", "A"]);
+  const state = useSelector((state) => state.teams);
 
   const options = {
     includeScore: false,
@@ -73,6 +79,7 @@ const ListTileTest = () => {
     setData(data);
   };
   const filterByRole = (role, check) => {
+    console.log("data size ", data.length);
     if (check) {
       roles.push(role);
       setRoles(roles);
@@ -99,7 +106,7 @@ const ListTileTest = () => {
     var newStats = Object.assign([], stats);
     console.log(parseFloat(typeof newStats[0].Mf));
     setIsLoading(true);
-    setData(stats);
+    setData(Object.assign({}, stats));
     setIsLoading(false);
   }, []);
 
@@ -114,13 +121,6 @@ const ListTileTest = () => {
   return (
     // <DismissKeyboard>
     <View style={styles.container}>
-      {/* <View
-      // style={{
-      //   flexDirection: "row",
-      //   // justifyContent: "flex-start",
-      //   alignItems: "center",
-      // }}
-      > */}
       <View style={{ flexDirection: "column-reverse" }}>
         <View style={styles.inputContainer}>
           <TextInput
@@ -132,7 +132,7 @@ const ListTileTest = () => {
             autoCorrect={false}
             value={query}
             onChangeText={(queryText) => handleSearch(queryText)}
-            placeholder="Search"
+            placeholder="Cerca..."
             onFocus={() => setShowFlatList(true)}
             onSubmitEditing={Keyboard.dismiss}
           />
@@ -145,9 +145,15 @@ const ListTileTest = () => {
             />
           </View>
         </View>
-        <View style={{ flexDirection: "row" }}>
+        <View style={styles.checkBoxContainer}>
           <CheckBox
-            title="P"
+            title={
+              <MaterialCommunityIcons
+                name={iconsConf["P"].name}
+                size={24}
+                color={iconsConf["P"].color}
+              />
+            }
             checked={checkP}
             onPress={() => {
               filterByRole("P", !checkP);
@@ -155,7 +161,13 @@ const ListTileTest = () => {
             }}
           />
           <CheckBox
-            title="D"
+            title={
+              <MaterialCommunityIcons
+                name={iconsConf["D"].name}
+                size={24}
+                color={iconsConf["D"].color}
+              />
+            }
             checked={checkD}
             onPress={() => {
               filterByRole("D", !checkD);
@@ -163,7 +175,13 @@ const ListTileTest = () => {
             }}
           />
           <CheckBox
-            title="C"
+            title={
+              <MaterialCommunityIcons
+                name={iconsConf["C"].name}
+                size={24}
+                color={iconsConf["C"].color}
+              />
+            }
             checked={checkC}
             onPress={() => {
               filterByRole("C", !checkC);
@@ -171,7 +189,13 @@ const ListTileTest = () => {
             }}
           />
           <CheckBox
-            title="A"
+            title={
+              <MaterialCommunityIcons
+                name={iconsConf["A"].name}
+                size={24}
+                color={iconsConf["A"].color}
+              />
+            }
             checked={checkA}
             onPress={() => {
               filterByRole("A", !checkA);
@@ -180,29 +204,28 @@ const ListTileTest = () => {
           />
         </View>
       </View>
-      {/* </View> */}
       {showFlatList ? (
         <KeyboardAvoidingView style={styles.flatlist}>
           <FlatList
-            ListHeaderComponent={<FlatListHeader onPressField={sortData} />}
+            ListHeaderComponent={<HeaderList onPressField={sortData} />}
             stickyHeaderIndices={[0]}
             data={_.filter(
-              _.filter(_.orderBy(data, field, orderType), (el) =>
-                roles.includes(el.R)
-              ),
-              (el) => !el.assigned
+              _.filter(
+                _.orderBy(data, field, orderType),
+                (el) =>
+                  roles.includes(el.R) &&
+                  !state.teams.map((el) => el.Id).includes(el.Id)
+              )
             )}
             keyExtractor={(item) => String(item.Id)}
             renderItem={({ item, index }) => {
-              if (!item.assigned) {
-                return (
-                  <PlayerTile
-                    index={index}
-                    item={item}
-                    onAssign={(index) => setAssigned(index)}
-                  />
-                );
-              }
+              return (
+                <PlayerTile
+                  index={index}
+                  item={item}
+                  onAssign={(index) => setAssigned(index)}
+                />
+              );
             }}
           />
         </KeyboardAvoidingView>
@@ -219,6 +242,10 @@ const ListTileTest = () => {
 export default ListTileTest;
 
 const styles = StyleSheet.create({
+  checkBoxContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   flatlist: {
     flex: 1,
   },
@@ -238,6 +265,8 @@ const styles = StyleSheet.create({
     // width: 200,
   },
   input: {
+    flex: 1,
+    // borderWidth: 1,
     paddingRight: 10,
     borderRadius: 10,
     margin: 10,
@@ -246,15 +275,15 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     borderBottomWidth: 0,
     marginLeft: 5,
-    height: 35,
+    height: 30,
   },
   container: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: "green",
+    // borderWidth: 1,
+    // borderColor: "green",
     backgroundColor: "#f8f8f8",
     padding: 10,
-    paddingTop: StatusBar.currentHeight + 5,
+    // paddingTop: StatusBar.currentHeight + 5,
   },
   text: {
     fontSize: 20,
