@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import _ from "lodash";
 import { StyleSheet, View, Alert } from "react-native";
-import stats from "../assets/lista2019 copy.json";
+// import stats from "../assets/lista2019 copy.json";
+import stats from "../assets/lista2019.json";
+
 import PlayerTile from "./PlayerTile";
 import FlatListHeader from "./FlatListHeader";
 import { CheckBox } from "react-native-elements";
@@ -40,11 +42,6 @@ const Asta = () => {
   const [roles, setRoles] = useState(["P", "D", "C", "A"]);
   const state = useSelector((state) => state.teams);
 
-  const setAssigned = (id) => {
-    // var index = stats.findIndex((el) => el.Id === id);
-    // data[index].assigned = true;
-    // setData(data);
-  };
   const filterByRole = (role, check) => {
     if (check) {
       roles.push(role);
@@ -201,11 +198,7 @@ const Asta = () => {
         <HeaderList disableAll={true} />
       </View>
       <View style={styles.playerTile}>
-        <PlayerTile
-          disableAssign={sample.disableAssign}
-          item={sample}
-          onAssign={() => setAssigned(sample.Id)}
-        />
+        <PlayerTile disableAssign={sample.disableAssign} item={sample} />
       </View>
       {/* </View> */}
 

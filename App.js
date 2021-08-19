@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import React from "react";
 import { View, Text, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -10,21 +11,31 @@ import ListTileTest from "./components/ListTileTest";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { store } from "./store/store";
 import Asta from "./components/Asta";
+import { createStackNavigator } from "@react-navigation/stack";
+import Settings from "./components/Settings";
+import TopTabs from "./TopTabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
+const Drawer = createDrawerNavigator();
+
+const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 const App = () => {
   return (
-    <Provider store={store}>
-      <SafeAreaProvider style={{ marginTop: StatusBar.currentHeight }}>
-        <NavigationContainer>
-          <Tab.Navigator>
-            <Tab.Screen name="Squadre" component={Home} />
-            <Tab.Screen name="Lista" component={ListTileTest} />
-            <Tab.Screen name="Asta" component={Asta} />
-          </Tab.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </Provider>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Provider store={store}>
+          <NavigationContainer>
+            <Drawer.Navigator>
+              <Drawer.Screen name="Settings" component={Settings} />
+              <Drawer.Screen name="TopTabs" component={TopTabs} />
+            </Drawer.Navigator>
+            {/* <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="TopTabs" component={TopTabs} /> */}
+          </NavigationContainer>
+        </Provider>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 

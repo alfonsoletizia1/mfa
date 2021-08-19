@@ -16,7 +16,9 @@ import {
   TextInput,
 } from "react-native";
 import Fuse from "fuse.js";
-import stats from "../assets/lista2019 copy.json";
+// import stats from "../assets/lista2019 copy.json";
+import stats from "../assets/lista2019.json";
+
 import { Ionicons } from "@expo/vector-icons";
 import PlayerTile from "./PlayerTile";
 import FlatListHeader from "./FlatListHeader";
@@ -72,12 +74,7 @@ const ListTileTest = () => {
       );
     }
   };
-  const setAssigned = (id) => {
-    var index = data.findIndex((el) => el.Id === id);
-    console.log("data[index]", data[index]);
-    data[index].assigned = true;
-    setData(data);
-  };
+
   const filterByRole = (role, check) => {
     console.log("data size ", data.length);
     if (check) {
@@ -219,13 +216,7 @@ const ListTileTest = () => {
             )}
             keyExtractor={(item) => String(item.Id)}
             renderItem={({ item, index }) => {
-              return (
-                <PlayerTile
-                  index={index}
-                  item={item}
-                  onAssign={(index) => setAssigned(index)}
-                />
-              );
+              return <PlayerTile index={index} item={item} />;
             }}
           />
         </KeyboardAvoidingView>

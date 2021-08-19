@@ -17,7 +17,7 @@ import { conf, iconsConf } from "../util/utilClasses";
 import { ASSIGN_TEAM_PLAYER } from "../store/stateSlicer";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-const PlayerTile = ({ item, onAssign, index, disableAssign }) => {
+const PlayerTile = ({ item, index, disableAssign }) => {
   function notifyMessage(msg) {
     if (Platform.OS === "android") {
       ToastAndroid.show(msg, ToastAndroid.SHORT);
@@ -50,7 +50,7 @@ const PlayerTile = ({ item, onAssign, index, disableAssign }) => {
         teamId: teamId,
       })
     );
-    onAssign(item.Id);
+    // onAssign(item.Id);
     notifyMessage("Assegnato!");
     setshowModal(false);
     // setdisableAssignButton(false);
