@@ -17,7 +17,12 @@ import { conf, iconsConf } from "../util/utilClasses";
 import { ASSIGN_TEAM_PLAYER } from "../store/stateSlicer";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 const PlayerTile = ({ item, index, disableAssign }) => {
+  const { actualConfiguration, configurations } = useSelector((state) => state);
+
+  // const teams = configurations[actualConfiguration].teams;
+  const teamStatus = configurations[actualConfiguration].teamStatus;
   function notifyMessage(msg) {
     if (Platform.OS === "android") {
       ToastAndroid.show(msg, ToastAndroid.SHORT);
@@ -60,7 +65,9 @@ const PlayerTile = ({ item, index, disableAssign }) => {
   };
   const [expand, setExpand] = useState(false);
   const [showModal, setshowModal] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState(conf.partecipants[0].id);
+  const [selectedTeam, setSelectedTeam] = useState(
+    Object.values(teamStatus)[0].id
+  );
   const [number, onChangeNumber] = useState("1");
 
   const [disableAssignButton, setdisableAssignButton] = useState(false);
@@ -89,9 +96,13 @@ const PlayerTile = ({ item, index, disableAssign }) => {
                     setSelectedTeam(itemValue)
                   }
                 >
-                  {conf.partecipants.map((el) => {
+                  {Object.keys(teamStatus).map((el) => {
                     return (
-                      <Picker.Item label={el.name} value={el.id} key={el.id} />
+                      <Picker.Item
+                        label={teamStatus[el].name}
+                        value={el}
+                        key={el}
+                      />
                     );
                   })}
                 </Picker>

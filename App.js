@@ -9,12 +9,13 @@ import { Provider } from "react-redux";
 import ListTileTest from "./components/ListTileTest";
 
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { store } from "./store/store";
+import { store, persistor } from "./store/store";
 import Asta from "./components/Asta";
 import { createStackNavigator } from "@react-navigation/stack";
 import Settings from "./components/Settings";
 import TopTabs from "./TopTabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { PersistGate } from "redux-persist/integration/react";
 
 const Drawer = createDrawerNavigator();
 
@@ -25,14 +26,15 @@ const App = () => {
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
         <Provider store={store}>
-          <NavigationContainer>
-            <Drawer.Navigator>
-              <Drawer.Screen name="Settings" component={Settings} />
-              <Drawer.Screen name="TopTabs" component={TopTabs} />
-            </Drawer.Navigator>
-            {/* <Stack.Screen name="Settings" component={Settings} />
-            <Stack.Screen name="TopTabs" component={TopTabs} /> */}
-          </NavigationContainer>
+          <PersistGate loading={null} persistor={persistor}>
+            <NavigationContainer>
+              <Drawer.Navigator>
+                <Drawer.Screen name="Home" component={Home} />
+                <Drawer.Screen name="New" component={Settings} />
+                <Drawer.Screen name="TopTabs" component={TopTabs} />
+              </Drawer.Navigator>
+            </NavigationContainer>
+          </PersistGate>
         </Provider>
       </SafeAreaView>
     </SafeAreaProvider>

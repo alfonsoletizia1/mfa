@@ -1,111 +1,107 @@
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-
-const Tab = createMaterialTopTabNavigator();
 import React from "react";
-import { View, KeyboardAvoidingView, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
+import { SET_ACTUAL_CONFIGURATION } from "../store/stateSlicer";
+const Item = ({ name }) => (
+  <View style={styles.item}>
+    <Text style={styles.title}>{name}</Text>
+  </View>
+);
 
-import styles from "../styles";
-import SectionListComponent from "./SectionListComponent";
-import { conf } from "../util/utilClasses";
-import { useSelector } from "react-redux";
-import _ from "lodash";
-///DATI FITTIZI DA OTTENERE
-export default function Home() {
-  const { teams, teamStatus } = useSelector((state) => state.teams);
+const Home = ({ navigation }) => {
+  const dispatch = useDispatch();
 
-  console.log("teamStatus", teamStatus);
-
-  // var team = teams.filter((el) => el);
-  return (
-    // <SafeAreaView>
-    <View style={styles.container}>
-      {/* <TeamTile availableCredits={conf.creditiIniziali} /> */}
-      {/* <View style={{ flex: 1 }}>
-        <ListTileTest />
-      </View> */}
-      {/* <FlatList
-        // ListHeaderComponent={<FlatListHeader />}
-        //ListHeaderComponent={renderHeader}
-        extraData={teams.teams}
-        numColumns={3}
-        data={teams.teams}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => (
-          <SectionListComponent team={item} teamName={"test"} />
-        )}
-      /> */}
-      {/* <SectionListComponent
-        key={conf.partecipants[0].id}
-        team={state.teams.filter((el) => el.teamId === conf.partecipants[0].id)}
-        teamName={conf.partecipants[0].name}
-        teamId={conf.partecipants[0].id}
-      /> */}
-      {/* {Object.keys(state.teamStatus).map((id) => {
-        return (
-          <View key={id}>
-            <SectionListComponent
-              team={state.teams.filter((el) => el.teamId === id)}
-              teamName={state.teamStatus[id].name}
-              teamId={id}
-              teamState={state.teamStatus[id]}
-              creditiDisponibili={state.teamStatus[id].creditiDisponibili}
-            />
-          </View>
-        );
-      })} */}
-      <ScrollView>
-        {Object.values(teamStatus)
-          .sort((a, b) => -a.creditiDisponibili + b.creditiDisponibili)
-          .map((p) => {
-            return (
-              <View key={p.id}>
-                <SectionListComponent
-                  team={teams.filter((el) => el.teamId === p.id)}
-                  teamName={p.name}
-                  teamId={p.id}
-                  teamState={p}
-                  creditiDisponibili={p.creditiDisponibili}
-                />
-              </View>
-            );
-          })}
-      </ScrollView>
-
-      {/* {conf.partecipants.map((p) => {
-        return (
-          <View key={p.id}>
-            <SectionListComponent
-              team={state.teams.filter((el) => el.teamId === p.id)}
-              teamName={p.name}
-              teamId={p.id}
-              teamState={state.teamStatus[p.id]}
-            />
-          </View>
-        );
-      })} */}
-      {/* <View style={styles.lists}>
-        {conf.partecipants.map((p) => {
-          return (
-            <View key={p.id}>
-              <SectionListComponent
-                key={p.id}
-                team={state.teams.filter((el) => el.teamId === p.id)}
-                teamName={p.name}
-                teamId={p.id}
-              />
-            </View>
-          );
-        })} */}
-
-      {/* <SectionListComponent team={teams.teams[0]} teamName={"test"} /> */}
-
-      {/* <SectionListComponent team={teams.teams[1]} />
-        <SectionListComponent team={teams.teams[2]} />
-
-        <SectionListComponent team={teams.teams[3]} /> */}
-    </View>
-
-    // </KeyboardAvoidingView>
-    // </SafeAreaView>
+  const configurations = useSelector((state) => state.configurations);
+  // console.log("HOME", configurations);
+  const confList = Object.values(configurations);
+  // console.log("conflist", confList);
+  const ids = Object.keys(configurations);
+  // console.log("ids", ids);
+  const data = confList.map((el, index) => {
+    return {
+      configuration: el,
+      id: ids[index],
+    };
+  });
+  const navigateToTopTabs = (key) => {
+    dispatch(
+      SET_ACTUAL_CONFIGURATION({
+        key: key,
+      })
+    );
+    navigation.navigate("TopTabs");
+  };
+  // console.log("HOME: data", data);
+  const renderItem = ({ item }) => (
+    <TouchableOpacity onPress={() => navigateToTopTabs(item.id)}>
+      <Item key={item.id} name={item.configuration.generalConfig.name} />
+    </TouchableOpacity>
   );
-}
+  return (
+    <View style={styles.container}>
+      <View style={styles.newConf}>
+        <Text style={styles.createNew}>Inizia una nuova asta!</Text>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("New", {
+              configurations: null,
+              key: uuidv4(),
+            })
+          }
+        >
+          <Ionicons name="md-add-circle-outline" size={45} color="green" />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.existingConf}>
+        <Text style={styles.createNew}>Scegli tra le aste già create:</Text>
+
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
+    </View>
+  );
+};
+
+export default Home;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    borderWidth: 1,
+  },
+  newConf: {
+    borderWidth: 1,
+    flex: 1,
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  existingConf: { borderWidth: 1, flex: 3 },
+  createNew: {
+    fontSize: 26,
+    fontWeight: "bold",
+    alignSelf: "center",
+  },
+  item: {
+    backgroundColor: "#fff",
+    padding: 5,
+    marginVertical: 5,
+    marginHorizontal: 5,
+    borderWidth: 0.5,
+    borderRadius: 10,
+  },
+  title: {
+    fontSize: 32,
+  },
+});

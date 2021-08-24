@@ -48,8 +48,9 @@ const ListTileTest = () => {
   const [orderType, setOrderType] = useState(null);
   const [showFlatList, setShowFlatList] = useState(true);
   const [roles, setRoles] = useState(["P", "D", "C", "A"]);
-  const state = useSelector((state) => state.teams);
-
+  const { actualConfiguration, configurations } = useSelector((state) => state);
+  const state = configurations[actualConfiguration];
+  // console.log("LIST TILE TEST state", state);
   const options = {
     includeScore: false,
     threshold: 0.1,
@@ -76,7 +77,7 @@ const ListTileTest = () => {
   };
 
   const filterByRole = (role, check) => {
-    console.log("data size ", data.length);
+    // console.log("data size ", data.length);
     if (check) {
       roles.push(role);
       setRoles(roles);
@@ -101,7 +102,7 @@ const ListTileTest = () => {
 
   useEffect(() => {
     var newStats = Object.assign([], stats);
-    console.log(parseFloat(typeof newStats[0].Mf));
+    // console.log(parseFloat(typeof newStats[0].Mf));
     setIsLoading(true);
     setData(Object.assign({}, stats));
     setIsLoading(false);

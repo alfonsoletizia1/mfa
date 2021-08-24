@@ -23,9 +23,9 @@ export default class ListTile extends Component {
       filteredStats: stats,
     };
   }
-  componentDidMount() {
-    console.log("stats", stats);
-  }
+  // componentDidMount() {
+  //   console.log("stats", stats);
+  // }
   updateSearch = (search) => {
     if (!search) {
       this.setState({

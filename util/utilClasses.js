@@ -55,9 +55,59 @@ export class Teams {
     }
   }
 }
-
+// {
+//   "crediti": "500",
+//   "partecipants": "8",
+//   "teamName": Object {
+//     "0": "1",
+//     "1": "2",
+//     "2": "3",
+//     "3": "4",
+//     "4": "5",
+//     "5": "6",
+//     "6": "7",
+//     "7": "8",
+//   },
+// }
+export function getStatusForSettingsFromReduxState(config) {
+  // console.log("getStatusForSettingsFromReduxState", config);
+  var ids = Object.keys(config.teamStatus);
+  var out = {};
+  var teamName = {};
+  ids.forEach((id) => {
+    teamName[id] = config.teamStatus[id].name;
+  });
+  return {
+    teamName: teamName,
+    crediti: config.generalConfig.creditiIniziali,
+    portieri: config.generalConfig.numPortieri,
+    difensori: config.generalConfig.numDifensori,
+    centrocampisti: config.generalConfig.numCentrocampisti,
+    attaccanti: config.generalConfig.numAttaccanti,
+    partecipants: ids.length,
+    nomeAsta: config.generalConfig.name,
+  };
+}
+export function getInitialStatus(conf) {
+  // console.log("conf", conf);
+  var ids = Object.keys(conf.teamName);
+  var initialStatus = {};
+  ids.forEach((id) => {
+    initialStatus[id] = {
+      name: conf.teamName[id],
+      id: id,
+      P: 3, //conf.numPortieri,
+      D: 8, //conf.numDifensori,
+      C: 8, //conf.numCentrocampisti,
+      A: 6, //conf.numAttaccanti,
+      creditiDisponibili: conf.crediti,
+    };
+  });
+  // console.log("INITIAL STATUS ", initialStatus);
+  return initialStatus;
+}
 export function getInitialTeamsStatus(conf) {
-  console.log("conf", conf);
+  // console.log("conf", conf);
   var initialStatus = {};
   conf.partecipants.forEach((el) => {
     initialStatus[el.id] = {
@@ -70,7 +120,7 @@ export function getInitialTeamsStatus(conf) {
       creditiDisponibili: conf.creditiIniziali,
     };
   });
-  console.log("INITIAL STATUS ", initialStatus);
+  // console.log("INITIAL STATUS ", initialStatus);
   return initialStatus;
 }
 export const statsFields = {

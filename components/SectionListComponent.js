@@ -82,14 +82,15 @@ export default function SectionListComponent(props) {
   const [showItems, setShowItems] = useState(true);
   const { teamName, team, teamId, teamState, creditiDisponibili } = props;
   // console.log("SECTION TEAM STATE", teamState);
-  const teamStatus = useSelector((state) => state.teams.teamStatus);
-
+  // const teamStatus = useSelector((state) => state.teams.teamStatus);
+  const { actualConfiguration, configurations } = useSelector((state) => state);
+  const teamStatus = configurations[actualConfiguration].teamStatus;
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.teamNameContainer}
         onPress={() => {
-          console.log(showItems);
+          // console.log(showItems);
           setShowItems(!showItems);
         }}
       >

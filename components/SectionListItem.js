@@ -32,6 +32,7 @@ const SectionListItem = ({ item, showItems }) => {
         oldValue: item.value,
         value: value,
         id: item.Id,
+        R: item.R,
       })
     );
     setEdit(false);

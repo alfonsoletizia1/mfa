@@ -14,7 +14,7 @@ const initialState = {
 };
 const taskReducer = createReducer(initialState, {
   ASSIGN_TEAM_PLAYER: (state, action) => {
-    console.log("ruolo", action.payload.role);
+    // console.log("ruolo", action.payload.role);
     switch (action.payload.role) {
       case "P":
         state.teams.teams[action.payload.id].addP(action.payload.player);
@@ -26,7 +26,7 @@ const taskReducer = createReducer(initialState, {
         break;
       case "C":
         state.teams.teams[action.payload.id].addC(action.payload.player);
-        console.log("team", state.teams.teams[action.payload.id]);
+        // console.log("team", state.teams.teams[action.payload.id]);
 
         break;
       case "A":
