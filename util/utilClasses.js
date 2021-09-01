@@ -134,7 +134,7 @@ export const statsFields = {
   gf: "Gf",
   gs: "Gs",
   assist: "Ass",
-  assistFermo: "Asf",
+  // assistFermo: "Asf",
   amm: "Amm",
   esp: "Esp",
   autogol: "Au",

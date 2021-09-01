@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Input } from "react-native-elements";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
-import { Button } from "react-native-elements";
+// import { Button } from "react-native-elements";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import { v4 as uuidv4 } from "uuid";
+import { StackActions } from "@react-navigation/native";
 import {
   getInitialStatus,
   getStatusForSettingsFromReduxState,
@@ -39,6 +40,30 @@ import {
 //   }
 //   console.log(values);
 // };
+const validateFirstStep = (nomeAsta, crediti, partecipanti) => {
+  if (!(nomeAsta && crediti && partecipanti)) {
+    return false;
+  }
+  if (crediti < 1) {
+    return false;
+  }
+  if (partecipanti < 1) {
+    return false;
+  }
+  return true;
+};
+const validateSecondStep = (teamsName, partecipants) => {
+  if (Object.values(teamsName).length < partecipants) {
+    return false;
+  }
+  for (var el of Object.values(teamsName)) {
+    if (!el) {
+      return false;
+    }
+  }
+
+  return true;
+};
 
 const Settings = ({ route, navigation }) => {
   const { configurations, key } = route.params;
@@ -94,6 +119,10 @@ const Settings = ({ route, navigation }) => {
         key: key,
       })
     );
+    const popAction = StackActions.pop(1);
+
+    navigation.dispatch(popAction);
+    // navigation.dispatch(StackActions.replace("Home"));
   };
   const [partecipants, setPartecipants] = useState(null);
   const [crediti, setCrediti] = useState(null);
@@ -134,15 +163,47 @@ const Settings = ({ route, navigation }) => {
       setActiveStep(0);
     }
   }, [key]);
+
+  useEffect(() => {
+    Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
+
+    // cleanup function
+    return () => {
+      Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+    };
+  }, []);
+
+  const _keyboardDidShow = () => {
+    // alert("Keyboard Shown");
+    setShowButtons(true);
+  };
+
+  const _keyboardDidHide = () => {
+    setShowButtons(false);
+  };
+
   return (
     // <DismissKeyboard>
     <View style={styles.container}>
-      <Text style={styles.title}> Iniziamo!</Text>
+      <Text style={styles.title}> Manca poco, configura la tua asta!</Text>
       <View>{/* Numero Partecipanti */}</View>
-      <ProgressSteps activeStep={activeStep}>
-        <ProgressStep label="Crediti" nextBtnText={"Avanti"}>
+      <ProgressSteps
+        activeStep={activeStep}
+        activeLabelColor={"#00b8cc"}
+        completedStepIconColor={"#00b8cc"}
+        activeStepIconBorderColor={"#00b8cc"}
+        completedProgressBarColor={"#00b8cc"}
+      >
+        <ProgressStep
+          label="Crediti"
+          nextBtnText={"Avanti"}
+          nextBtnDisabled={!validateFirstStep(nomeAsta, crediti, partecipants)}
+        >
           <View style={{ flex: 1, justifyContent: "center" }}>
             <Input
+              containerStyle={styles.input}
               disabledInputStyle={{ background: "#ddd" }}
               //   errorMessage="Oops! that's not correct."
               label="Scegli un nome per la tua asta:"
@@ -153,6 +214,7 @@ const Settings = ({ route, navigation }) => {
               onChangeText={(text) => setNomeAsta(text)}
             />
             <Input
+              containerStyle={styles.input}
               disabledInputStyle={{ background: "#ddd" }}
               //   errorMessage="Oops! that's not correct."
               label="Numero di partecipanti:"
@@ -167,6 +229,7 @@ const Settings = ({ route, navigation }) => {
             />
             {/* Crediti iniziali */}
             <Input
+              containerStyle={styles.input}
               //   disabledInputStyle={{ background: "#ddd" }}
               //   errorMessage="Oops! that's not correct."
               label="Crediti Iniziali"
@@ -186,6 +249,7 @@ const Settings = ({ route, navigation }) => {
           removeBtnRow={showButtons}
           nextBtnText={"Avanti"}
           previousBtnText={"Indietro"}
+          nextBtnDisabled={!validateSecondStep(teamsName, partecipants)}
         >
           <View style={{ alignItems: "center" }}>
             {Array.apply(null, Array(Number(partecipants))).map((el, index) => {
@@ -207,7 +271,14 @@ const Settings = ({ route, navigation }) => {
                   key={index}
                   //   disabledInputStyle={{ background: "#ddd" }}
                   //   errorMessage="Oops! that's not correct."
-                  label={"Nome Squadra " + (index + 1) + ":"}
+                  label={
+                    index > 0
+                      ? "Nome Squadra " + (index + 1) + ":"
+                      : "Nome della TUA squadra:"
+                  }
+                  labelStyle={{
+                    color: index > 0 ? "gray" : "red",
+                  }}
                   leftIcon={
                     <MaterialCommunityIcons name="account-outline" size={20} />
                   }
@@ -321,5 +392,26 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  input: {
+    // flex: 1,
+    // // padding: 5,
+    // // borderRadius: 15,
+    // // marginTop: 2,
+    // // borderWidth: 1,
+    // // minWidth: 150,
+    // marginTop: 1,
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.45,
+    // shadowRadius: 3,
+    // elevation: 4,
+    // // margin: 12,
+    // backgroundColor: "white",
+    // // borderRadius: 20,
+    // // padding: 27,
   },
 });

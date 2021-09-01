@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
 
 import { getInitialTeamsStatus, conf } from "../util/utilClasses";
-import stats from "../assets/lista2019 copy.json";
+import stats from "../assets/lista2021.json";
 
 const teamSlice = createSlice({
   name: "team",
@@ -42,6 +42,9 @@ const teamSlice = createSlice({
       // console.log("SET_ACTUAL_CONFIGURATION ACTION ", action);
 
       state.actualConfiguration = action.payload.key;
+    },
+    REMOVE_CONFIGURATION: (state, action) => {
+      delete state.configurations[action.payload.id];
     },
     ADD_CONFIGURATION: (state, action) => {
       // console.log("ADD_CONFIGURATION ACTION ", action);
@@ -150,6 +153,7 @@ const teamSlice = createSlice({
   },
 });
 export const {
+  REMOVE_CONFIGURATION,
   UNSHIFT_PASSED_IDS,
   REMOVE_PLAYER,
   ASSIGN_TEAM_PLAYER,

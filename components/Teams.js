@@ -14,6 +14,22 @@ const Home = () => {
     (state) => state.configurations[actualConfiguration].teamStatus
   );
 
+  const notMyTeam = Object.values(teamStatus).filter((el) => el.id != 0);
+  // console.log("notMyTeam", notMyTeam);
+
+  const myTeam = Object.values(teamStatus).filter((el) => el.id == 0);
+  console.log("myTeam", myTeam);
+
+  const myCredits = myTeam[0].creditiDisponibili;
+  console.log("myCredits", myCredits);
+
+  const mapIDDiff = {};
+  notMyTeam.forEach((el) => {
+    mapIDDiff[el.id] = myCredits - el.creditiDisponibili;
+  });
+  mapIDDiff["0"] = 0;
+  console.log("mapIDDiff", mapIDDiff);
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -26,6 +42,7 @@ const Home = () => {
               <View key={p.id}>
                 <SectionListComponent
                   team={teams.filter((el) => el.teamId === p.id)}
+                  diff={mapIDDiff[p.id]}
                   teamName={p.name}
                   teamId={p.id}
                   teamState={p}

@@ -2,26 +2,26 @@ import React, { useState, useEffect, useRef } from "react";
 import _ from "lodash";
 import {
   StyleSheet,
-  Text,
+  // Text,
   View,
   FlatList,
   ActivityIndicator,
-  Image,
-  TouchableOpacity,
+  // Image,
+  // TouchableOpacity,
   Keyboard,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  StatusBar,
-  Platform,
+  // TouchableWithoutFeedback,
+  // StatusBar,
+  // Platform,
   TextInput,
 } from "react-native";
 import Fuse from "fuse.js";
 // import stats from "../assets/lista2019 copy.json";
-import stats from "../assets/lista2019.json";
+import stats from "../assets/lista2021.json";
 
 import { Ionicons } from "@expo/vector-icons";
 import PlayerTile from "./PlayerTile";
-import FlatListHeader from "./FlatListHeader";
+// import FlatListHeader from "./FlatListHeader";
 
 import { CheckBox } from "react-native-elements";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -202,7 +202,7 @@ const ListTileTest = () => {
           />
         </View>
       </View>
-      {showFlatList ? (
+      {showFlatList && (
         <KeyboardAvoidingView style={styles.flatlist}>
           <FlatList
             ListHeaderComponent={<HeaderList onPressField={sortData} />}
@@ -221,10 +221,7 @@ const ListTileTest = () => {
             }}
           />
         </KeyboardAvoidingView>
-      ) : (
-        <View></View>
       )}
-
       <View style={{ zIndex: 0 }}></View>
     </View>
     // </DismissKeyboard>
@@ -237,6 +234,7 @@ const styles = StyleSheet.create({
   checkBoxContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    // backgroundColor: "white",
   },
   flatlist: {
     flex: 1,

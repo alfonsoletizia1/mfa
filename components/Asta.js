@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import _ from "lodash";
 import { StyleSheet, View, Alert } from "react-native";
 // import stats from "../assets/lista2019 copy.json";
-import stats from "../assets/lista2019.json";
+// import stats from "../assets/lista2021.json";
 
 import PlayerTile from "./PlayerTile";
-import FlatListHeader from "./FlatListHeader";
+// import FlatListHeader from "./FlatListHeader";
 import { CheckBox } from "react-native-elements";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { iconsConf } from "../util/utilClasses";
@@ -31,7 +31,7 @@ const START_SAMPLE = {
   Gf: 0,
   Gs: 0,
   Ass: 0,
-  Asf: 0,
+  // Asf: 0,
   Amm: 0,
   Esp: 0,
   Au: 0,
@@ -242,7 +242,7 @@ const Asta = () => {
         </View>
       </View>
 
-      {/* <View style={{  }}> */}
+      {/* <View style={{ flex: 1 }}> */}
       <View style={styles.header}>
         <HeaderList disableAll={true} />
       </View>
@@ -280,7 +280,15 @@ const Asta = () => {
 export default Asta;
 
 const styles = StyleSheet.create({
+  header: {
+    padding: 10,
+    paddingBottom: 0,
+  },
   playerTile: {
+    padding: 10,
+    paddingTop: 0,
+    // flex: 1,
+    // justifyContent: "center",
     // borderWidth: 1,
   },
   buttonGroup: {
