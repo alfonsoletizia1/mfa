@@ -3,6 +3,7 @@ import _ from "lodash";
 
 import { getInitialTeamsStatus, conf } from "../util/utilClasses";
 import stats from "../assets/lista2021.json";
+// import stats from "../assets/lista2019 copy.json";
 
 const teamSlice = createSlice({
   name: "team",

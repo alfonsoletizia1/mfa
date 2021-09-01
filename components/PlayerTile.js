@@ -191,7 +191,11 @@ const PlayerTile = ({ item, index, disableAssign }) => {
               disabled={disableAssign}
               onPress={() => handleAssign(item)}
             >
-              <Ionicons name="add-circle-outline" size={24} color="blue" />
+              <Ionicons
+                name="add-circle-outline"
+                size={32}
+                color={disableAssign ? "gray" : "blue"}
+              />
             </TouchableOpacity>
           </View>
         </TouchableOpacity>

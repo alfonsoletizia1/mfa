@@ -248,7 +248,10 @@ const Asta = () => {
       </View>
       <View style={styles.playerTile}>
         <PlayerTile
-          disableAssign={sampleRedux.disableAssign}
+          disableAssign={
+            sampleRedux.disableAssign ||
+            state.teams.map((el) => el.Id).includes(sampleRedux.Id)
+          }
           item={sampleRedux}
         />
       </View>

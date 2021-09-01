@@ -214,23 +214,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   positiveDiff: {
-    justifyContent: "space-between",
+    // justifyContent: "center",
     flexDirection: "row",
     padding: 5,
-    margin: 5,
-    backgroundColor: "#74f2a4",
-    borderRadius: 10,
+    marginTop: 5,
+    marginBottom: 5,
+    // borderRadius: 10,
     borderWidth: 2,
+    backgroundColor: "#74f2a4",
     borderColor: "#74f2a4", //1be0da
   },
   negativeDiff: {
-    justifyContent: "space-between",
+    // justifyContent: "center",
     flexDirection: "row",
     padding: 5,
-    margin: 5,
-    backgroundColor: "#f07171",
-    borderRadius: 10,
+    marginTop: 5,
+    marginBottom: 5,
+    // borderRadius: 10,
     borderWidth: 2,
+    backgroundColor: "#f07171",
     borderColor: "#f07171", //1be0da
   },
   teamNameContainer: {
@@ -239,9 +241,9 @@ const styles = StyleSheet.create({
     padding: 5,
     marginTop: 5,
     marginBottom: 5,
-    backgroundColor: "#74e6f2",
     // borderRadius: 10,
     borderWidth: 2,
+    backgroundColor: "#74e6f2",
     borderColor: "#74e6f2", //1be0da
   },
   teamName: {
