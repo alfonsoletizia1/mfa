@@ -3,7 +3,7 @@ import _ from "lodash";
 import { StyleSheet, View, Alert } from "react-native";
 // import stats from "../assets/lista2019 copy.json";
 // import stats from "../assets/lista2021.json";
-
+import AwesomeAlert from "react-native-awesome-alerts";
 import PlayerTile from "./PlayerTile";
 // import FlatListHeader from "./FlatListHeader";
 import { CheckBox } from "react-native-elements";
@@ -44,6 +44,8 @@ const Asta = () => {
   // const [passedIds, setPassedIds] = useState([]);
   //const [sample, setSample] = useState(START_SAMPLE);
   const [backIndex, setBackIndex] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
+
   const [checkP, setCheckP] = useState(true);
   const [checkD, setCheckD] = useState(true);
   const [checkC, setCheckC] = useState(true);
@@ -112,6 +114,7 @@ const Asta = () => {
         )
       )
     );
+    console.log("sample", sample);
     if (sample) {
       // console.log("sample", sample.Id);
       // passedIds.unshift(sample);
@@ -138,42 +141,40 @@ const Asta = () => {
       //setPlayers(players);
       // setSample(sample);
     } else {
-      Alert.alert(
-        "Attenzione!",
-        "I giocatori in questo ruolo sono terminati!",
-        [
-          {
-            text: "Chiudi",
-            // onPress: () => console.log("Chiudi"),
-          },
-          {
-            text: "Ricomincia",
-            onPress: () => {
-              // console.log("Ricomincia ", passedIds);
-              // players.push(...passedIds);
-              dispatch(
-                ADD_PLAYER({
-                  players: passedIds,
-                })
-              );
-              //setPlayers(players);
-              dispatch(
-                RESET_PASSED_IDS({
-                  passedIds: [],
-                })
-              );
-              // setPassedIds([]);
-              SET_SAMPLE({
-                sample: START_SAMPLE,
-              });
-              //setSample(START_SAMPLE);
-              //   console.log("Ricomincia");
-            },
-            style: "cancel",
-          },
-          //   { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]
-      );
+      console.log("set alert");
+      setShowAlert(true);
+      // alert("Attenzione!", "I giocatori in questo ruolo sono terminati!", [
+      //   {
+      //     text: "Chiudi",
+      //     // onPress: () => console.log("Chiudi"),
+      //   },
+      //   {
+      //     text: "Ricomincia",
+      //     onPress: () => {
+      //       // console.log("Ricomincia ", passedIds);
+      //       // players.push(...passedIds);
+      //       dispatch(
+      //         ADD_PLAYER({
+      //           players: passedIds,
+      //         })
+      //       );
+      //       //setPlayers(players);
+      //       dispatch(
+      //         RESET_PASSED_IDS({
+      //           passedIds: [],
+      //         })
+      //       );
+      //       // setPassedIds([]);
+      //       SET_SAMPLE({
+      //         sample: START_SAMPLE,
+      //       });
+      //       //setSample(START_SAMPLE);
+      //       //   console.log("Ricomincia");
+      //     },
+      //     style: "cancel",
+      //   },
+      //   //   { text: "OK", onPress: () => console.log("OK Pressed") },
+      // ]);
     }
   };
   return (
@@ -276,6 +277,40 @@ const Asta = () => {
           Estrai
         </Button>
       </View>
+      <AwesomeAlert
+        show={showAlert}
+        showProgress={false}
+        title="Attenzione"
+        message="I giocatori in questo ruolo sono terminati!"
+        closeOnTouchOutside={false}
+        closeOnHardwareBackPress={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        cancelText="Chiudi"
+        confirmText="Ricomincia!"
+        confirmButtonColor="#DD6B55"
+        onCancelPressed={() => {
+          setShowAlert(false);
+        }}
+        onConfirmPressed={() => {
+          dispatch(
+            ADD_PLAYER({
+              players: passedIds,
+            })
+          );
+          //setPlayers(players);
+          dispatch(
+            RESET_PASSED_IDS({
+              passedIds: [],
+            })
+          );
+          // setPassedIds([]);
+          SET_SAMPLE({
+            sample: START_SAMPLE,
+          });
+          setShowAlert(false);
+        }}
+      />
     </View>
   );
 };
