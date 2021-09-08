@@ -24,13 +24,15 @@ const PlayerTile = ({ item, index, disableAssign }) => {
   // const teams = configurations[actualConfiguration].teams;
   const teamStatus = configurations[actualConfiguration].teamStatus;
   function notifyMessage(msg) {
-    if (Platform.OS === "android") {
-      ToastAndroid.show(msg, ToastAndroid.SHORT);
-    } else if (Platform.OS === "ios") {
-      AlertIOS.alert(msg);
-    } else {
-      alert(msg);
-    }
+    alert(msg);
+
+    // if (Platform.OS === "android") {
+    //   ToastAndroid.show(msg, ToastAndroid.SHORT);
+    //   // } else if (Platform.OS === "ios") {
+    //   //   AlertIOS.alert(msg);
+    //   // } else {
+    //   alert(msg);
+    // }
   }
   const dispatch = useDispatch();
   const handleAssign = (item) => {

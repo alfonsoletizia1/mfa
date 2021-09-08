@@ -1,6 +1,5 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
-import styles from "../styles";
+import { View, ScrollView, StyleSheet } from "react-native";
 import SectionListComponent from "./SectionListComponent";
 import { useSelector } from "react-redux";
 import _ from "lodash";
@@ -31,15 +30,16 @@ const Home = () => {
   console.log("mapIDDiff", mapIDDiff);
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
+    <ScrollView>
+      <View style={styles.container}>
+        {/* <ScrollView> */}
         {Object.values(teamStatus)
           .sort((a, b) => {
             return -Number(a.creditiDisponibili) + Number(b.creditiDisponibili);
           })
           .map((p) => {
             return (
-              <View key={p.id}>
+              <View style={styles.listElement} key={p.id}>
                 <SectionListComponent
                   team={teams.filter((el) => el.teamId === p.id)}
                   diff={mapIDDiff[p.id]}
@@ -51,8 +51,19 @@ const Home = () => {
               </View>
             );
           })}
-      </ScrollView>
-    </View>
+        {/* </ScrollView> */}
+      </View>
+    </ScrollView>
   );
 };
+const styles = StyleSheet.create({
+  // container: {
+  //   flexDirection: "row",
+  //   flex: 1,
+  //   // justifyContent: '',
+  // },
+  // listElement: {
+  //   flex: 1,
+  // },
+});
 export default Home;

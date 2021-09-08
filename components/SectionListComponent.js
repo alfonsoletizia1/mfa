@@ -8,6 +8,8 @@ import {
   SectionList,
   // StatusBar,
   TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
   // TextInput,
 } from "react-native";
 import { useSelector } from "react-redux";
@@ -124,30 +126,32 @@ export default function SectionListComponent(props) {
           <Text style={styles.teamName}>{diff}</Text>
         </View>
       </TouchableOpacity>
-      <SectionList
-        sections={transformData(team)}
-        keyExtractor={(item) => item.Id}
-        renderItem={({ item }) => {
-          return <SectionListItem showItems={showItems} item={item} />;
-        }}
-        renderSectionHeader={({ section: { role, total, roleCode } }) =>
-          showItems ? (
-            <Header
-              leftTitle={
-                conf.num[roleCode] -
-                teamStatus[teamId][roleCode] +
-                "/" +
-                conf.num[roleCode]
-              }
-              rightTitle={total}
-              centerTitle={role}
-            />
-          ) : null
-        }
-        // renderSectionFooter={({ section: { total } }) => (
-        //   <SectionSeparator totalValue={total} />
-        // )}
-      />
+      <SafeAreaView>
+        <SectionList
+          sections={transformData(team)}
+          keyExtractor={(item) => item.Id}
+          renderItem={({ item }) => {
+            return <SectionListItem showItems={showItems} item={item} />;
+          }}
+          renderSectionHeader={({ section: { role, total, roleCode } }) =>
+            showItems ? (
+              <Header
+                leftTitle={
+                  conf.num[roleCode] -
+                  teamStatus[teamId][roleCode] +
+                  "/" +
+                  conf.num[roleCode]
+                }
+                rightTitle={total}
+                centerTitle={role}
+              />
+            ) : null
+          }
+          // renderSectionFooter={({ section: { total } }) => (
+          //   <SectionSeparator totalValue={total} />
+          // )}
+        />
+      </SafeAreaView>
     </View>
   );
 }
@@ -167,6 +171,7 @@ const styles = StyleSheet.create({
   },
   container: {
     // flex: 1,
+    // height: "100%",
     padding: 5,
     // borderRadius: 15,
     marginTop: 2,

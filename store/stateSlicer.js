@@ -24,6 +24,12 @@ const teamSlice = createSlice({
         state.configurations[state.actualConfiguration].players,
         (el) => el.Id == action.payload.id
       );
+      console.log(
+        "remove player",
+        state.configurations[state.actualConfiguration].players
+          .filter((el) => el.R == "P")
+          .map((el) => el.Name)
+      );
       // state.configurations[state.actualConfiguration].players.push(action.payload.player);
     },
     ADD_PLAYER: (state, action) => {

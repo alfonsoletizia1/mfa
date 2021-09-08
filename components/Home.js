@@ -19,7 +19,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/titillium-web";
 import AppLoading from "expo-app-loading";
-import TouchableScale from "react-native-touchable-scale";
+// import TouchableScale from "react-native-touchable-scale";
 // import { Button } from "react-native";
 import { ListItem, Button } from "react-native-elements";
 const Item = ({ name, onDelete, press }) => (
@@ -29,10 +29,10 @@ const Item = ({ name, onDelete, press }) => (
     onPress={() => press()}
     bottomDivider
     topDivider
-    Component={TouchableScale}
-    friction={90}
-    tension={100}
-    activeScale={0.95}
+    // Component={TouchableScale}
+    // friction={90}
+    // tension={100}
+    // activeScale={0.95}
   >
     <ListItem.Content style={styles.item}>
       <ListItem.Title>
