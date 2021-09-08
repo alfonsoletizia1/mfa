@@ -1,19 +1,19 @@
 import React, { Component } from "react";
-import { ListItem, Avatar, SearchBar } from "react-native-elements";
+import { ListItem } from "react-native-elements";
 import {
   Text,
   View,
   SafeAreaView,
   StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar,
+  // ScrollView,
+  // TouchableOpacity,
+  // StatusBar,
   FlatList,
 } from "react-native";
-import stats from "../assets/lista2019.json";
+import stats from "../assets/lista2021.json";
 import { TextInput } from "react-native-paper";
 import filter from "lodash.filter";
-import style from "../style";
+// import style from "../style";
 
 export default class ListTile extends Component {
   constructor(props) {
@@ -23,9 +23,9 @@ export default class ListTile extends Component {
       filteredStats: stats,
     };
   }
-  componentDidMount() {
-    console.log("stats", stats);
-  }
+  // componentDidMount() {
+  //   console.log("stats", stats);
+  // }
   updateSearch = (search) => {
     if (!search) {
       this.setState({

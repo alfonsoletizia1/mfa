@@ -80,7 +80,7 @@ const HeaderList = (props) => {
         </View>
         <View style={styles.pg}>
           <View style={{ opacity: 0 }}>
-            <Ionicons name="add-circle-outline" size={24} color="blue" />
+            <Ionicons name="add-circle-outline" size={32} color="blue" />
           </View>
         </View>
       </View>

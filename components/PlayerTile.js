@@ -13,19 +13,26 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
-import { conf, iconsConf } from "../util/utilClasses";
+import { iconsConf } from "../util/utilClasses";
 import { ASSIGN_TEAM_PLAYER } from "../store/stateSlicer";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 const PlayerTile = ({ item, index, disableAssign }) => {
+  const { actualConfiguration, configurations } = useSelector((state) => state);
+
+  // const teams = configurations[actualConfiguration].teams;
+  const teamStatus = configurations[actualConfiguration].teamStatus;
   function notifyMessage(msg) {
-    if (Platform.OS === "android") {
-      ToastAndroid.show(msg, ToastAndroid.SHORT);
-    } else if (Platform.OS === "ios") {
-      AlertIOS.alert(msg);
-    } else {
-      alert(msg);
-    }
+    alert(msg);
+
+    // if (Platform.OS === "android") {
+    //   ToastAndroid.show(msg, ToastAndroid.SHORT);
+    //   // } else if (Platform.OS === "ios") {
+    //   //   AlertIOS.alert(msg);
+    //   // } else {
+    //   alert(msg);
+    // }
   }
   const dispatch = useDispatch();
   const handleAssign = (item) => {
@@ -60,76 +67,101 @@ const PlayerTile = ({ item, index, disableAssign }) => {
   };
   const [expand, setExpand] = useState(false);
   const [showModal, setshowModal] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState(conf.partecipants[0].id);
+  const [selectedTeam, setSelectedTeam] = useState(
+    Object.values(teamStatus)[0].id
+  );
   const [number, onChangeNumber] = useState("1");
 
-  const [disableAssignButton, setdisableAssignButton] = useState(false);
+  // const [disableAssignButton, setdisableAssignButton] = useState(false);
 
   return (
     <View style={styles.externalContainer}>
-      <View style={styles.centeredView}>
-        {showModal ? (
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={showModal}
-            onRequestClose={() => {
-              setshowModal(false);
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text> {"Seleziona la squadra: "} </Text>
-                <Picker
-                  style={styles.picker}
-                  itemStyle={styles.itemStyle}
-                  mode={"dropdown"}
-                  selectedValue={selectedTeam}
-                  onValueChange={(itemValue, itemIndex) =>
-                    setSelectedTeam(itemValue)
-                  }
-                >
-                  {conf.partecipants.map((el) => {
-                    return (
-                      <Picker.Item label={el.name} value={el.id} key={el.id} />
-                    );
-                  })}
-                </Picker>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={{ fontSize: 16 }}>{"Valore: "}</Text>
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={onChangeNumber}
-                    value={number}
-                    placeholder="1"
-                    keyboardType="numeric"
-                    required={true}
-                  />
-                </View>
+      {/* <View> */}
+      {showModal && (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showModal}
+          onRequestClose={() => {
+            setshowModal(false);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View
+                style={{
+                  alignSelf: "flex-start",
+                  margin: 5,
+                }}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                  {" "}
+                  {"Seleziona la squadra: "}{" "}
+                </Text>
+              </View>
+              <Picker
+                style={styles.picker}
+                itemStyle={styles.itemStyle}
+                mode={"dropdown"}
+                selectedValue={selectedTeam}
+                onValueChange={(itemValue, itemIndex) =>
+                  setSelectedTeam(itemValue)
+                }
+              >
+                {Object.keys(teamStatus).map((el) => {
+                  return (
+                    <Picker.Item
+                      label={teamStatus[el].name}
+                      value={el}
+                      key={el}
+                    />
+                  );
+                })}
+              </Picker>
 
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
+              <View
+                style={{
+                  alignSelf: "flex-start",
+                  margin: 5,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                  {" "}
+                  {"Valore: "}{" "}
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeNumber}
+                  value={number}
+                  placeholder="1"
+                  keyboardType="numeric"
+                  required={true}
+                />
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Button onPress={() => setshowModal(false)} mode={"outlined"}>
+                  {"Annulla"}{" "}
+                </Button>
+                <Button
+                  onPress={() => handleAssignClick(item, number, selectedTeam)}
+                  mode={"outlined"}
                 >
-                  <Button onPress={() => setshowModal(false)} mode={"outlined"}>
-                    {"Annulla"}{" "}
-                  </Button>
-                  <Button
-                    onPress={() =>
-                      handleAssignClick(item, number, selectedTeam)
-                    }
-                    mode={"outlined"}
-                  >
-                    {"OK"}
-                  </Button>
-                </View>
+                  {"OK"}
+                </Button>
               </View>
             </View>
-          </Modal>
-        ) : null}
-      </View>
+          </View>
+        </Modal>
+      )}
+      {/* </View> */}
       <View>
         <TouchableOpacity
           style={styles.container}
@@ -161,27 +193,31 @@ const PlayerTile = ({ item, index, disableAssign }) => {
               disabled={disableAssign}
               onPress={() => handleAssign(item)}
             >
-              <Ionicons name="add-circle-outline" size={24} color="blue" />
+              <Ionicons
+                name="add-circle-outline"
+                size={32}
+                color={disableAssign ? "gray" : "blue"}
+              />
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </View>
       {expand ? (
         <View>
-          {/* <View style={styles.details}>
+          <View style={styles.details}>
             <View>
-              <Text>{"PG: " + item.Pg}</Text>
+              {/* <Text>{"PG: " + item.Pg}</Text> */}
               <Text>{"GF: " + item.Gf}</Text>
               <Text>{"Gs: " + item.Gs}</Text>
               <Text>{"Ass: " + item.Ass}</Text>
             </View>
             <View>
-              <Text>{"Asf: " + item.Asf}</Text>
+              {/* <Text>{"Asf: " + item.Asf}</Text> */}
               <Text>{"Amm: " + item.Amm}</Text>
               <Text>{"Esp: " + item.Esp}</Text>
               <Text>{"Au: " + item.Au}</Text>
             </View>
-          </View> */}
+          </View>
         </View>
       ) : null}
     </View>
@@ -234,7 +270,7 @@ export const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.45,
     shadowRadius: 4,
     elevation: 5,
   },
@@ -254,7 +290,7 @@ export const styles = StyleSheet.create({
     margin: 10,
   },
   details: {
-    flex: 1,
+    // flex: 1,
     flexDirection: "row",
     marginTop: 10,
     borderTopWidth: 1,

@@ -1,19 +1,26 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
+  // SafeAreaView,
   SectionList,
-  StatusBar,
+  // StatusBar,
   TouchableOpacity,
-  TextInput,
+  ScrollView,
+  SafeAreaView,
+  // TextInput,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { conf } from "../util/utilClasses";
 import SectionListItem from "./SectionListItem";
-
+import {
+  TitilliumWeb_700Bold,
+  TitilliumWeb_400Regular,
+  useFonts,
+} from "@expo-google-fonts/titillium-web";
+import AppLoading from "expo-app-loading";
 const transformData = (team) => {
   // console.log("transform data ---> team -->", team);
   const portieri = team.filter((el) => el.R === "P");
@@ -80,51 +87,82 @@ const Header = ({ leftTitle, rightTitle, centerTitle }) => (
 );
 export default function SectionListComponent(props) {
   const [showItems, setShowItems] = useState(true);
-  const { teamName, team, teamId, teamState, creditiDisponibili } = props;
+  const { teamName, team, teamId, teamState, creditiDisponibili, diff } = props;
   // console.log("SECTION TEAM STATE", teamState);
-  const teamStatus = useSelector((state) => state.teams.teamStatus);
+  // const teamStatus = useSelector((state) => state.teams.teamStatus);
+  const { actualConfiguration, configurations } = useSelector((state) => state);
+  const teamStatus = configurations[actualConfiguration].teamStatus;
 
+  let [fontsLoaded] = useFonts({
+    TitilliumWeb_700Bold,
+    TitilliumWeb_400Regular,
+  });
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={styles.teamNameContainer}
+        // style={styles.teamNameContainer}
+        style={
+          diff == 0
+            ? styles.teamNameContainer
+            : diff > 0
+            ? styles.positiveDiff
+            : styles.negativeDiff
+        }
         onPress={() => {
-          console.log(showItems);
+          // console.log(showItems);
           setShowItems(!showItems);
         }}
       >
-        <Text style={styles.teamName}>{teamName}</Text>
-        <Text style={styles.teamName}>{creditiDisponibili}</Text>
+        <View style={styles.teamNameEl}>
+          <Text style={styles.teamName}>{teamName}</Text>
+        </View>
+        <View style={styles.teamNameEl}>
+          <Text style={styles.teamName}>{creditiDisponibili}</Text>
+        </View>
+        <View style={styles.teamNameEl}>
+          <Text style={styles.teamName}>{diff}</Text>
+        </View>
       </TouchableOpacity>
-      <SectionList
-        sections={transformData(team)}
-        keyExtractor={(item) => item.Id}
-        renderItem={({ item }) => {
-          return <SectionListItem showItems={showItems} item={item} />;
-        }}
-        renderSectionHeader={({ section: { role, total, roleCode } }) =>
-          showItems ? (
-            <Header
-              leftTitle={
-                conf.num[roleCode] -
-                teamStatus[teamId][roleCode] +
-                "/" +
-                conf.num[roleCode]
-              }
-              rightTitle={total}
-              centerTitle={role}
-            />
-          ) : null
-        }
-        // renderSectionFooter={({ section: { total } }) => (
-        //   <SectionSeparator totalValue={total} />
-        // )}
-      />
+      <SafeAreaView>
+        <SectionList
+          sections={transformData(team)}
+          keyExtractor={(item) => item.Id}
+          renderItem={({ item }) => {
+            return <SectionListItem showItems={showItems} item={item} />;
+          }}
+          renderSectionHeader={({ section: { role, total, roleCode } }) =>
+            showItems ? (
+              <Header
+                leftTitle={
+                  conf.num[roleCode] -
+                  teamStatus[teamId][roleCode] +
+                  "/" +
+                  conf.num[roleCode]
+                }
+                rightTitle={total}
+                centerTitle={role}
+              />
+            ) : null
+          }
+          // renderSectionFooter={({ section: { total } }) => (
+          //   <SectionSeparator totalValue={total} />
+          // )}
+        />
+      </SafeAreaView>
     </View>
   );
 }
 // }
 const styles = StyleSheet.create({
+  teamNameEl: {
+    width: "33%",
+    justifyContent: "center",
+    // borderWidth: 1,
+    alignItems: "center",
+  },
   input: {
     height: 40,
     margin: 12,
@@ -133,11 +171,25 @@ const styles = StyleSheet.create({
   },
   container: {
     // flex: 1,
-    padding: 10,
-    borderRadius: 10,
-    margin: 5,
-    borderWidth: 1,
+    // height: "100%",
+    padding: 5,
+    // borderRadius: 15,
+    marginTop: 2,
+    // borderWidth: 1,
     // minWidth: 150,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.45,
+    shadowRadius: 3,
+    elevation: 4,
+    // margin: 12,
+    backgroundColor: "white",
+    // borderRadius: 20,
+    // padding: 27,
   },
   headerContainer: {
     justifyContent: "space-between",
@@ -166,21 +218,45 @@ const styles = StyleSheet.create({
     // backgroundColor: "#fff",
     fontWeight: "bold",
   },
-  teamNameContainer: {
-    justifyContent: "space-around",
+  positiveDiff: {
+    // justifyContent: "center",
     flexDirection: "row",
     padding: 5,
-    margin: 5,
-    backgroundColor: "#1be0da",
-    borderRadius: 10,
+    marginTop: 5,
+    marginBottom: 5,
+    // borderRadius: 10,
     borderWidth: 2,
-    borderColor: "#1be0da",
+    backgroundColor: "#74f2a4",
+    borderColor: "#74f2a4", //1be0da
+  },
+  negativeDiff: {
+    // justifyContent: "center",
+    flexDirection: "row",
+    padding: 5,
+    marginTop: 5,
+    marginBottom: 5,
+    // borderRadius: 10,
+    borderWidth: 2,
+    backgroundColor: "#f07171",
+    borderColor: "#f07171", //1be0da
+  },
+  teamNameContainer: {
+    // justifyContent: "center",
+    flexDirection: "row",
+    padding: 5,
+    marginTop: 5,
+    marginBottom: 5,
+    // borderRadius: 10,
+    borderWidth: 2,
+    backgroundColor: "#74e6f2",
+    borderColor: "#74e6f2", //1be0da
   },
   teamName: {
-    fontSize: 16,
-    color: "#fff",
-    fontWeight: "bold",
+    fontSize: 15,
+    color: "black",
+    // fontWeight: "bold",
     textAlign: "center",
+    fontFamily: "TitilliumWeb_700Bold",
   },
   title: {
     fontSize: 14,

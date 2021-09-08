@@ -2,26 +2,26 @@ import React, { useState, useEffect, useRef } from "react";
 import _ from "lodash";
 import {
   StyleSheet,
-  Text,
+  // Text,
   View,
   FlatList,
   ActivityIndicator,
-  Image,
-  TouchableOpacity,
+  // Image,
+  // TouchableOpacity,
   Keyboard,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  StatusBar,
-  Platform,
+  // TouchableWithoutFeedback,
+  // StatusBar,
+  // Platform,
   TextInput,
 } from "react-native";
 import Fuse from "fuse.js";
 // import stats from "../assets/lista2019 copy.json";
-import stats from "../assets/lista2019.json";
+import stats from "../assets/lista2021.json";
 
 import { Ionicons } from "@expo/vector-icons";
 import PlayerTile from "./PlayerTile";
-import FlatListHeader from "./FlatListHeader";
+// import FlatListHeader from "./FlatListHeader";
 
 import { CheckBox } from "react-native-elements";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -48,8 +48,9 @@ const ListTileTest = () => {
   const [orderType, setOrderType] = useState(null);
   const [showFlatList, setShowFlatList] = useState(true);
   const [roles, setRoles] = useState(["P", "D", "C", "A"]);
-  const state = useSelector((state) => state.teams);
-
+  const { actualConfiguration, configurations } = useSelector((state) => state);
+  const state = configurations[actualConfiguration];
+  // console.log("LIST TILE TEST state", state);
   const options = {
     includeScore: false,
     threshold: 0.1,
@@ -76,7 +77,7 @@ const ListTileTest = () => {
   };
 
   const filterByRole = (role, check) => {
-    console.log("data size ", data.length);
+    // console.log("data size ", data.length);
     if (check) {
       roles.push(role);
       setRoles(roles);
@@ -101,7 +102,7 @@ const ListTileTest = () => {
 
   useEffect(() => {
     var newStats = Object.assign([], stats);
-    console.log(parseFloat(typeof newStats[0].Mf));
+    // console.log(parseFloat(typeof newStats[0].Mf));
     setIsLoading(true);
     setData(Object.assign({}, stats));
     setIsLoading(false);
@@ -201,7 +202,7 @@ const ListTileTest = () => {
           />
         </View>
       </View>
-      {showFlatList ? (
+      {showFlatList && (
         <KeyboardAvoidingView style={styles.flatlist}>
           <FlatList
             ListHeaderComponent={<HeaderList onPressField={sortData} />}
@@ -220,10 +221,7 @@ const ListTileTest = () => {
             }}
           />
         </KeyboardAvoidingView>
-      ) : (
-        <View></View>
       )}
-
       <View style={{ zIndex: 0 }}></View>
     </View>
     // </DismissKeyboard>
@@ -236,6 +234,7 @@ const styles = StyleSheet.create({
   checkBoxContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    // backgroundColor: "white",
   },
   flatlist: {
     flex: 1,

@@ -1,70 +1,45 @@
 import "react-native-gesture-handler";
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import Home from "./components/Home";
-import { Ionicons } from "@expo/vector-icons";
-import { Provider } from "react-redux";
+import Teams from "./components/Teams";
 import ListTileTest from "./components/ListTileTest";
-
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { store } from "./store/store";
 import Asta from "./components/Asta";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { View, Text } from "react-native";
+import {
+  TitilliumWeb_700Bold,
+  useFonts,
+} from "@expo-google-fonts/titillium-web";
+import AppLoading from "expo-app-loading";
 
-// const Tab = createBottomTabNavigator();
 const Tab = createMaterialTopTabNavigator();
 const TopTabs = () => {
+  let [fontsLoaded] = useFonts({
+    // Monoton_400Regular,
+    // PressStart2P_400Regular,
+    TitilliumWeb_700Bold,
+  });
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
-        {/* <Provider store={store}> */}
-        {/* <NavigationContainer> */}
-        <Tab.Navigator tabBarPosition="bottom">
-          {/* <Tab.Screen
-            name={"Drawer"}
-            options={{
-              title: () => <Ionicons name="menu" size={24} color="black" />,
-            }}
-            component={Home}
-            listeners={({ navigation }) => ({
-              tabPress: (e) => {
-                e.preventDefault();
-                navigation.openDrawer();
-              },
-              swipeStart: (e) => {
-                navigation.openDrawer();
-              },
-            })}
-          /> */}
-          <Tab.Screen
-            name="Squadre"
-            component={Home}
-            // options={{
-            //   title: () => (
-            //     <View
-            //       style={{
-            //         flexDirection: "row",
-            //         justifyContent: "space-around",
-            //       }}
-            //     >
-            //       <Ionicons name="menu" size={24} color="black" />
-            //       <Text>{"Squadre"}</Text>
-            //     </View>
-            //   ),
-            // }}
-            // listeners={({ navigation }) => ({
-            //   swipeEnd: (e) => {
-            //     navigation.openDrawer();
-            //   },
-            // })}
-          />
+        <Tab.Navigator
+          tabBarPosition="bottom"
+          screenOptions={{
+            // tabBarActiveTintColor: "#008896",
+            tabBarStyle: {
+              // backgroundColor: "#f2fcfc",
+            },
+            tabBarLabelStyle: {
+              fontFamily: "TitilliumWeb_700Bold",
+            },
+          }}
+        >
+          <Tab.Screen name="Squadre" component={Teams} />
           <Tab.Screen name="Lista" component={ListTileTest} />
           <Tab.Screen name="Asta" component={Asta} />
         </Tab.Navigator>
-        {/* </NavigationContainer> */}
-        {/* </Provider> */}
       </SafeAreaView>
     </SafeAreaProvider>
   );

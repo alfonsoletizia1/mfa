@@ -8,6 +8,11 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.2.0",
+    "@expo-google-fonts/monoton": "^0.2.0",
+    "@expo-google-fonts/press-start-2p": "^0.2.0",
+    "@expo-google-fonts/titillium-web": "^0.2.0",
+    "@expo/ngrok": "^4.1.0",
     "@material-ui/core": "^4.12.2",
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@react-native-async-storage/async-storage": "^1.15.6",
@@ -20,12 +25,15 @@
     "@react-navigation/stack": "^6.0.4",
     "@reduxjs/toolkit": "^1.6.1",
     "expo": "~42.0.1",
+    "expo-app-loading": "^1.1.2",
+    "expo-font": "~9.2.1",
     "expo-status-bar": "~1.0.4",
     "fuse.js": "^6.4.6",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-instantsearch-dom": "^6.12.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-awesome-alerts": "^1.5.2",
     "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-pager-view": "^5.4.0",
@@ -35,10 +43,13 @@
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-tab-view": "^3.1.1",
+    "react-native-touchable-scale": "^2.1.2",
     "react-native-vector-icons": "^8.1.0",
     "react-native-web": "~0.13.12",
     "react-redux": "^7.2.4",
-    "redux": "^4.1.0"
+    "redux": "^4.1.0",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

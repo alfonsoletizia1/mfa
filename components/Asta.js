@@ -2,46 +2,60 @@ import React, { useState } from "react";
 import _ from "lodash";
 import { StyleSheet, View, Alert } from "react-native";
 // import stats from "../assets/lista2019 copy.json";
-import stats from "../assets/lista2019.json";
-
+// import stats from "../assets/lista2021.json";
+import AwesomeAlert from "react-native-awesome-alerts";
 import PlayerTile from "./PlayerTile";
-import FlatListHeader from "./FlatListHeader";
+// import FlatListHeader from "./FlatListHeader";
 import { CheckBox } from "react-native-elements";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { iconsConf } from "../util/utilClasses";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Button } from "react-native-paper";
 import HeaderList from "./HeaderList";
+import {
+  REMOVE_PLAYER,
+  RESET_PASSED_IDS,
+  UNSHIFT_PASSED_IDS,
+  ADD_PLAYER,
+  SET_SAMPLE,
+} from "../store/stateSlicer";
 
 const START_SAMPLE = {
   Id: 99999,
   R: "A",
-  Nome: "Clicca estrai",
-  Squadra: "per iniziare!",
+  Nome: "Seleziona in alto il ruolo che vuoi estrarre",
+  Squadra: "Poi clicca estrai per iniziare!",
   Pg: 0,
   Mv: 0,
   Mf: 0,
   Gf: 0,
   Gs: 0,
   Ass: 0,
-  Asf: 0,
+  // Asf: 0,
   Amm: 0,
   Esp: 0,
   Au: 0,
   disableAssign: true,
 };
 const Asta = () => {
-  const [players, setPlayers] = useState([...stats]);
-  const [passedIds, setPassedIds] = useState([]);
-  const [sample, setSample] = useState(START_SAMPLE);
+  const dispatch = useDispatch();
+
+  // const [players, setPlayers] = useState([...stats]);
+  // const [passedIds, setPassedIds] = useState([]);
+  //const [sample, setSample] = useState(START_SAMPLE);
   const [backIndex, setBackIndex] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
+
   const [checkP, setCheckP] = useState(true);
   const [checkD, setCheckD] = useState(true);
   const [checkC, setCheckC] = useState(true);
   const [checkA, setCheckA] = useState(true);
   const [roles, setRoles] = useState(["P", "D", "C", "A"]);
-  const state = useSelector((state) => state.teams);
-
+  const { actualConfiguration, configurations } = useSelector((state) => state);
+  const state = configurations[actualConfiguration];
+  const players = state.players;
+  const passedIds = state.passedIds;
+  const sampleRedux = state.sample;
   const filterByRole = (role, check) => {
     if (check) {
       roles.push(role);
@@ -57,11 +71,16 @@ const Asta = () => {
 
   const goBack = () => {
     if (passedIds.length <= backIndex + 1 || passedIds.lengt <= 1) {
-      alert("Finit");
+      // alert("Finit");
     } else {
-      console.log("vack index", backIndex + 1);
-      console.log("back -->", passedIds[backIndex + 1]);
-      setSample(passedIds[backIndex + 1]);
+      // console.log("vack index", backIndex + 1);
+      // console.log("back -->", passedIds[backIndex + 1]);
+      dispatch(
+        SET_SAMPLE({
+          sample: passedIds[backIndex + 1],
+        })
+      );
+      //setSample(passedIds[backIndex + 1]);
       setBackIndex(backIndex + 1);
     }
   };
@@ -69,16 +88,20 @@ const Asta = () => {
     if (backIndex <= 0) {
       alert("Finit");
     } else {
-      console.log("next index", backIndex - 1);
-      console.log("next -->", passedIds[backIndex - 1]);
-      setSample(passedIds[backIndex - 1]);
+      // console.log("next index", backIndex - 1);
+      // console.log("next -->", passedIds[backIndex - 1]);
+      dispatch(
+        SET_SAMPLE({
+          sample: passedIds[backIndex - 1],
+        })
+      );
+      // setSample(passedIds[backIndex - 1]);
       setBackIndex(backIndex - 1);
     }
   };
   const extract = () => {
     // console.log("players", players);
     if (backIndex >= 0) {
-      console.log("reset back");
       setBackIndex(0);
     }
     var sample = _.sample(
@@ -91,40 +114,67 @@ const Asta = () => {
         )
       )
     );
+    console.log("sample", sample);
     if (sample) {
-      console.log("sample", sample.Id);
-      passedIds.unshift(sample);
-      setPassedIds(passedIds);
-      console.log("passedIds", passedIds);
-
-      var removed = _.remove(players, (el) => el.Id == sample.Id);
-      //   console.log("removed", removed);
-      setPlayers(players);
-      setSample(sample);
-    } else {
-      Alert.alert(
-        "Attenzione!",
-        "I giocatori in questo ruolo sono terminati!",
-        [
-          {
-            text: "Chiudi",
-            onPress: () => console.log("Chiudi"),
-          },
-          {
-            text: "Ricomincia",
-            onPress: () => {
-              console.log("Ricomincia ", passedIds);
-              players.push(...passedIds);
-              setPlayers(players);
-              setPassedIds([]);
-              setSample(START_SAMPLE);
-              //   console.log("Ricomincia");
-            },
-            style: "cancel",
-          },
-          //   { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]
+      // console.log("sample", sample.Id);
+      // passedIds.unshift(sample);
+      dispatch(
+        UNSHIFT_PASSED_IDS({
+          sample: sample,
+        })
       );
+      dispatch(
+        SET_SAMPLE({
+          sample: sample,
+        })
+      );
+      // setPassedIds(passedIds);
+      // console.log("passedIds", passedIds);
+
+      //var removed = _.remove(players, (el) => el.Id == sample.Id);
+      //   console.log("removed", removed);
+      dispatch(
+        REMOVE_PLAYER({
+          id: sample.Id,
+        })
+      );
+      //setPlayers(players);
+      // setSample(sample);
+    } else {
+      console.log("set alert");
+      setShowAlert(true);
+      // alert("Attenzione!", "I giocatori in questo ruolo sono terminati!", [
+      //   {
+      //     text: "Chiudi",
+      //     // onPress: () => console.log("Chiudi"),
+      //   },
+      //   {
+      //     text: "Ricomincia",
+      //     onPress: () => {
+      //       // console.log("Ricomincia ", passedIds);
+      //       // players.push(...passedIds);
+      //       dispatch(
+      //         ADD_PLAYER({
+      //           players: passedIds,
+      //         })
+      //       );
+      //       //setPlayers(players);
+      //       dispatch(
+      //         RESET_PASSED_IDS({
+      //           passedIds: [],
+      //         })
+      //       );
+      //       // setPassedIds([]);
+      //       SET_SAMPLE({
+      //         sample: START_SAMPLE,
+      //       });
+      //       //setSample(START_SAMPLE);
+      //       //   console.log("Ricomincia");
+      //     },
+      //     style: "cancel",
+      //   },
+      //   //   { text: "OK", onPress: () => console.log("OK Pressed") },
+      // ]);
     }
   };
   return (
@@ -193,12 +243,18 @@ const Asta = () => {
         </View>
       </View>
 
-      {/* <View style={{  }}> */}
+      {/* <View style={{ flex: 1 }}> */}
       <View style={styles.header}>
         <HeaderList disableAll={true} />
       </View>
       <View style={styles.playerTile}>
-        <PlayerTile disableAssign={sample.disableAssign} item={sample} />
+        <PlayerTile
+          disableAssign={
+            sampleRedux.disableAssign ||
+            state.teams.map((el) => el.Id).includes(sampleRedux.Id)
+          }
+          item={sampleRedux}
+        />
       </View>
       {/* </View> */}
 
@@ -221,6 +277,40 @@ const Asta = () => {
           Estrai
         </Button>
       </View>
+      <AwesomeAlert
+        show={showAlert}
+        showProgress={false}
+        title="Attenzione"
+        message="I giocatori in questo ruolo sono terminati!"
+        closeOnTouchOutside={false}
+        closeOnHardwareBackPress={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        cancelText="Chiudi"
+        confirmText="Ricomincia!"
+        confirmButtonColor="#DD6B55"
+        onCancelPressed={() => {
+          setShowAlert(false);
+        }}
+        onConfirmPressed={() => {
+          dispatch(
+            ADD_PLAYER({
+              players: passedIds,
+            })
+          );
+          //setPlayers(players);
+          dispatch(
+            RESET_PASSED_IDS({
+              passedIds: [],
+            })
+          );
+          // setPassedIds([]);
+          SET_SAMPLE({
+            sample: START_SAMPLE,
+          });
+          setShowAlert(false);
+        }}
+      />
     </View>
   );
 };
@@ -228,7 +318,15 @@ const Asta = () => {
 export default Asta;
 
 const styles = StyleSheet.create({
+  header: {
+    padding: 10,
+    paddingBottom: 0,
+  },
   playerTile: {
+    padding: 10,
+    paddingTop: 0,
+    // flex: 1,
+    // justifyContent: "center",
     // borderWidth: 1,
   },
   buttonGroup: {

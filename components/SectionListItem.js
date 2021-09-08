@@ -32,6 +32,7 @@ const SectionListItem = ({ item, showItems }) => {
         oldValue: item.value,
         value: value,
         id: item.Id,
+        R: item.R,
       })
     );
     setEdit(false);
@@ -72,10 +73,10 @@ const SectionListItem = ({ item, showItems }) => {
           </View>
         ) : (
           <TouchableOpacity style={styles.item} onPress={() => setEdit(true)}>
-            <View style={styles.playerContainer}>
+            {/* <View style={styles.playerContainer}>
               <Text style={styles.title}>{item.Nome}</Text>
               <Text style={styles.title}>{number}</Text>
-            </View>
+            </View> */}
           </TouchableOpacity>
         )}
       </View>
